@@ -18,7 +18,7 @@ export default async function CountriesPage() {
     <>
       <Breadcrumbs items={[{ name: "Головна", url: "/" }, { name: "Країни", url: "/countries" }]} />
       <div className="container pb-16">
-        <h1 className="text-3xl font-bold text-slate-900">Країни для українців</h1>
+        <h1 className="text-3xl font-bold text-ink">Країни для українців</h1>
         <p className="mt-2 max-w-2xl text-slate-600">
           Оберіть країну, щоб дізнатися про документи, податки, житло, роботу та вартість життя.
         </p>

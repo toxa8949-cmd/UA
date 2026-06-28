@@ -18,35 +18,29 @@ export function Newsletter() {
         body: JSON.stringify({ email, source: "homepage" }),
       });
       if (!res.ok) throw new Error();
-      setState("ok");
-      setMsg("Готово! Перевірте пошту.");
-      setEmail("");
+      setState("ok"); setMsg("Готово! Перевірте пошту."); setEmail("");
     } catch {
-      setState("error");
-      setMsg("Не вдалося підписатися. Спробуйте пізніше.");
+      setState("error"); setMsg("Не вдалося підписатися. Спробуйте пізніше.");
     }
   }
 
   return (
-    <div className="rounded-2xl bg-brand-600 p-8 text-white md:p-12">
-      <h2 className="text-2xl font-bold">Отримуйте корисні оновлення для українців за кордоном</h2>
-      <p className="mt-2 max-w-xl text-brand-100">
-        Гайди, калькулятори та вигідні пропозиції — без спаму.
-      </p>
-      <div className="mt-6 flex max-w-md flex-col gap-3 sm:flex-row">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="your@email.com"
-          aria-label="Email"
-          className="flex-1 rounded-lg px-4 py-2.5 text-slate-900 outline-none"
-        />
-        <Button variant="secondary" onClick={submit} disabled={state === "loading"}>
-          {state === "loading" ? "..." : "Підписатися"}
-        </Button>
+    <div className="overflow-hidden rounded-2xl border border-emerald/20 bg-emerald p-8 md:p-12">
+      <div className="max-w-xl">
+        <h2 className="font-display text-2xl font-bold text-white md:text-3xl">Корисні оновлення раз на тиждень</h2>
+        <p className="mt-3 text-emerald-50/90">Нові гайди, калькулятори й вигідні пропозиції. Без спаму, відписка будь-коли.</p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <input
+            type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com" aria-label="Email"
+            className="flex-1 rounded-xl border-0 px-4 py-3 text-ink outline-none ring-2 ring-transparent focus:ring-gold-400"
+          />
+          <Button variant="secondary" onClick={submit} disabled={state === "loading"} className="bg-ink hover:bg-ink-800">
+            {state === "loading" ? "..." : "Підписатися"}
+          </Button>
+        </div>
+        {msg && <p className="mt-3 text-sm text-emerald-50">{msg}</p>}
       </div>
-      {msg && <p className="mt-3 text-sm text-brand-100">{msg}</p>}
     </div>
   );
 }

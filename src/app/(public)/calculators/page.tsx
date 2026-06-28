@@ -17,7 +17,7 @@ export default function CalculatorsPage() {
     <>
       <Breadcrumbs items={[{ name: "Головна", url: "/" }, { name: "Калькулятори", url: "/calculators" }]} />
       <div className="container pb-16">
-        <h1 className="text-3xl font-bold text-slate-900">Калькулятори</h1>
+        <h1 className="text-3xl font-bold text-ink">Калькулятори</h1>
         <p className="mt-2 max-w-2xl text-slate-600">
           Порахуйте витрати на життя, бюджет переїзду та чисту зарплату.
         </p>
@@ -28,7 +28,7 @@ export default function CalculatorsPage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
                   <Calculator size={20} />
                 </div>
-                <h2 className="mt-4 font-semibold text-slate-900">{c.title}</h2>
+                <h2 className="mt-4 font-semibold text-ink">{c.title}</h2>
                 <p className="mt-1 text-sm text-slate-600">{c.description}</p>
               </Card>
             </Link>

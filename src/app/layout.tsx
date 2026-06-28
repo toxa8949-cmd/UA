@@ -1,5 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import "@fontsource/manrope/400.css";
+import "@fontsource/manrope/600.css";
+import "@fontsource/manrope/700.css";
+import "@fontsource/manrope/800.css";
+import "@fontsource/source-sans-3/400.css";
+import "@fontsource/source-sans-3/500.css";
+import "@fontsource/source-sans-3/600.css";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/500.css";
+import "@fontsource/jetbrains-mono/700.css";
 import Script from "next/script";
 import "./globals.css";
 import { SITE } from "@/lib/constants";
@@ -7,11 +16,6 @@ import { GA_ID } from "@/lib/analytics";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { websiteJsonLd, organizationJsonLd } from "@/lib/seo";
 
-const inter = Inter({
-  subsets: ["latin", "cyrillic"],
-  variable: "--font-sans",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -28,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="uk" className={inter.variable}>
+    <html lang="uk">
       <body>
         <JsonLd data={websiteJsonLd()} />
         <JsonLd data={organizationJsonLd()} />

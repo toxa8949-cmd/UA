@@ -22,7 +22,7 @@ export default async function Page() {
         { name: "Вартість життя", url: "/calculators/cost-of-living" },
       ]} />
       <div className="container pb-16">
-        <h1 className="text-3xl font-bold text-slate-900">Калькулятор вартості життя</h1>
+        <h1 className="text-3xl font-bold text-ink">Калькулятор вартості життя</h1>
         <p className="mt-2 max-w-2xl text-slate-600">
           Введіть свої витрати, щоб оцінити місячний бюджет та рівень витрат.
         </p>

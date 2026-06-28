@@ -71,10 +71,10 @@ export function RelocationBudgetCalculator({ countries }: Props) {
       </Card>
 
       <div className="space-y-4">
-        <Card className="bg-brand-600 text-white">
-          <p className="text-sm text-brand-100">Комфортний бюджет</p>
+        <Card className="bg-emerald text-white">
+          <p className="text-sm text-emerald-50">Комфортний бюджет</p>
           <p className="mt-1 text-3xl font-bold">{formatMoney(comfort, currency)}</p>
-          <p className="mt-1 text-brand-100">≈ {formatMoney(toEur(comfort, currency), "EUR")}</p>
+          <p className="mt-1 text-emerald-50">≈ {formatMoney(toEur(comfort, currency), "EUR")}</p>
         </Card>
         <div className="grid grid-cols-2 gap-4">
           <Card>

@@ -19,7 +19,7 @@ export default async function DealsPage() {
     <>
       <Breadcrumbs items={[{ name: "Головна", url: "/" }, { name: "Бонуси", url: "/deals" }]} />
       <div className="container pb-16">
-        <h1 className="text-3xl font-bold text-slate-900">Бонуси та пропозиції</h1>
+        <h1 className="text-3xl font-bold text-ink">Бонуси та пропозиції</h1>
         <p className="mt-2 max-w-2xl text-slate-600">
           Вигідні пропозиції від сервісів. Може містити партнерські посилання.
         </p>
@@ -30,8 +30,8 @@ export default async function DealsPage() {
             {deals.map((d) => (
               <Card key={d.id} className="flex flex-col">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-semibold text-slate-900">{d.title}</h3>
-                  {d.bonus_amount && <Badge color="green">{d.bonus_amount}</Badge>}
+                  <h3 className="font-semibold text-ink">{d.title}</h3>
+                  {d.bonus_amount && <Badge color="emerald">{d.bonus_amount}</Badge>}
                 </div>
                 {d.description && <p className="mt-2 flex-1 text-sm text-slate-600">{d.description}</p>}
                 <a

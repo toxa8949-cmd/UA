@@ -22,7 +22,7 @@ export default async function Page() {
         { name: "Зарплата netto/brutto", url: "/calculators/salary-netto-brutto" },
       ]} />
       <div className="container pb-16">
-        <h1 className="text-3xl font-bold text-slate-900">Калькулятор зарплати netto/brutto</h1>
+        <h1 className="text-3xl font-bold text-ink">Калькулятор зарплати netto/brutto</h1>
         <p className="mt-2 max-w-2xl text-slate-600">
           Оцініть приблизну чисту зарплату після утримань.
         </p>

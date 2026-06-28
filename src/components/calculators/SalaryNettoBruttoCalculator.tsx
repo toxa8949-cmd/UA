@@ -64,8 +64,8 @@ export function SalaryNettoBruttoCalculator({ countries }: Props) {
       </Card>
 
       <div className="space-y-4">
-        <Card className="bg-brand-600 text-white">
-          <p className="text-sm text-brand-100">Приблизно netto (на руки)</p>
+        <Card className="bg-emerald text-white">
+          <p className="text-sm text-emerald-50">Приблизно netto (на руки)</p>
           <p className="mt-1 text-3xl font-bold">{formatMoney(result.netto, currency)}</p>
         </Card>
         <div className="grid grid-cols-2 gap-4">

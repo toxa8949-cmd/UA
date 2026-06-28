@@ -18,7 +18,7 @@ export default async function ServicesPage() {
     <>
       <Breadcrumbs items={[{ name: "Головна", url: "/" }, { name: "Сервіси", url: "/services" }]} />
       <div className="container pb-16">
-        <h1 className="text-3xl font-bold text-slate-900">Каталог сервісів</h1>
+        <h1 className="text-3xl font-bold text-ink">Каталог сервісів</h1>
         <p className="mt-2 max-w-2xl text-slate-600">
           Перевірені сервіси для переказів, звʼязку, страхування та бізнесу за кордоном.
         </p>

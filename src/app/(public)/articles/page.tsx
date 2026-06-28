@@ -18,7 +18,7 @@ export default async function ArticlesPage() {
     <>
       <Breadcrumbs items={[{ name: "Головна", url: "/" }, { name: "Статті", url: "/articles" }]} />
       <div className="container pb-16">
-        <h1 className="text-3xl font-bold text-slate-900">Статті та гайди</h1>
+        <h1 className="text-3xl font-bold text-ink">Статті та гайди</h1>
         <p className="mt-2 max-w-2xl text-slate-600">
           Практичні матеріали про життя, документи та фінанси за кордоном.
         </p>

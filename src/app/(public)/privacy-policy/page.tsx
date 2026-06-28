@@ -9,7 +9,7 @@ export default function Page() {
     <>
       <Breadcrumbs items={[{ name: "Головна", url: "/" }, { name: "Політика конфіденційності", url: "/privacy-policy" }]} />
       <div className="container max-w-3xl pb-16 prose-content">
-        <h1 className="text-3xl font-bold text-slate-900">Політика конфіденційності</h1>
+        <h1 className="text-3xl font-bold text-ink">Політика конфіденційності</h1>
         <p>Ми поважаємо вашу приватність. Ця сторінка пояснює, які дані ми збираємо та як їх використовуємо.</p>
         <h2>Які дані ми збираємо</h2>
         <p>Email-адресу, якщо ви підписуєтесь на розсилку. Знеособлену аналітику відвідувань (через інструменти веб-аналітики).</p>

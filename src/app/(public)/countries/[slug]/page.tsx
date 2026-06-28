@@ -97,13 +97,18 @@ export default async function CountryPage({
       />
 
       {/* Hero */}
-      <section className="border-b border-slate-200 bg-gradient-to-b from-brand-50 to-white">
+      <section className="border-b border-sand-300 bg-sand-200/40">
         <div className="container py-12">
-          <div className="flex items-center gap-3">
-            <span className="text-5xl">{country.emoji}</span>
+          <div className="flex items-center gap-4">
+            <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-ink font-mono text-2xl font-bold text-white">
+              {(country.slug === "czech-republic" ? "CZ" : country.slug.slice(0,2).toUpperCase())}
+            </span>
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">{country.name}</h1>
-              <p className="text-slate-500">Столиця: {country.capital} · {country.currency} · {country.language}</p>
+              <div className="flex items-center gap-2">
+                <h1 className="font-display text-3xl font-bold text-ink md:text-4xl">{country.name}</h1>
+                <span className="text-3xl">{country.emoji}</span>
+              </div>
+              <p className="mt-1 text-slate-500">Столиця: {country.capital} · {country.currency} · {country.language}</p>
             </div>
           </div>
           <p className="mt-4 max-w-2xl text-lg text-slate-600">{country.short_description}</p>
@@ -117,7 +122,7 @@ export default async function CountryPage({
             {stats.map((s) => (
               <Card key={s.label}>
                 <p className="text-sm text-slate-500">{s.label}</p>
-                <p className="mt-1 text-xl font-bold text-slate-900">{s.value}</p>
+                <p className="mt-1 text-xl font-bold text-ink">{s.value}</p>
               </Card>
             ))}
           </div>
@@ -131,7 +136,7 @@ export default async function CountryPage({
           if (!text) return null;
           return (
             <Card key={s.key}>
-              <h2 className="font-semibold text-slate-900">{s.label}</h2>
+              <h2 className="font-semibold text-ink">{s.label}</h2>
               <p className="mt-2 text-sm text-slate-600">{text}</p>
             </Card>
           );
@@ -140,7 +145,7 @@ export default async function CountryPage({
 
       {/* Services for country */}
       {services.length > 0 && (
-        <Section title="Рекомендовані сервіси" className="bg-slate-50">
+        <Section title="Рекомендовані сервіси" className="bg-sand-200/50">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((s) => <ServiceCard key={s.id} service={s} />)}
           </div>

@@ -18,7 +18,7 @@ export default async function ComparePage() {
     <>
       <Breadcrumbs items={[{ name: "Головна", url: "/" }, { name: "Порівняння", url: "/compare" }]} />
       <div className="container pb-16">
-        <h1 className="text-3xl font-bold text-slate-900">Порівняння країн</h1>
+        <h1 className="text-3xl font-bold text-ink">Порівняння країн</h1>
         <p className="mt-2 max-w-2xl text-slate-600">
           Оберіть країни та порівняйте ключові показники поруч.
         </p>

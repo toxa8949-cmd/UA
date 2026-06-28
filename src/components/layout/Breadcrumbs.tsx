@@ -13,9 +13,9 @@ export function Breadcrumbs({ items }: { items: { name: string; url: string }[] 
             <li key={item.url} className="flex items-center gap-1">
               {i > 0 && <ChevronRight size={14} className="text-slate-400" />}
               {i === items.length - 1 ? (
-                <span className="text-slate-700">{item.name}</span>
+                <span className="text-ink">{item.name}</span>
               ) : (
-                <Link href={item.url} className="hover:text-brand-600">{item.name}</Link>
+                <Link href={item.url} className="hover:text-emerald">{item.name}</Link>
               )}
             </li>
           ))}

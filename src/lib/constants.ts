@@ -64,3 +64,11 @@ export const FOOTER_LINKS = [
   { href: "/terms", label: "Умови користування" },
   { href: "/affiliate-disclosure", label: "Партнерські посилання" },
 ] as const;
+
+export const COUNTRY_CODES: Record<string, string> = {
+  poland: "PL",
+  germany: "DE",
+  "czech-republic": "CZ",
+  spain: "ES",
+  portugal: "PT",
+};

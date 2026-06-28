@@ -9,7 +9,7 @@ export default function Page() {
     <>
       <Breadcrumbs items={[{ name: "Головна", url: "/" }, { name: "Умови користування", url: "/terms" }]} />
       <div className="container max-w-3xl pb-16 prose-content">
-        <h1 className="text-3xl font-bold text-slate-900">Умови користування</h1>
+        <h1 className="text-3xl font-bold text-ink">Умови користування</h1>
         <p>Використовуючи цей сайт, ви погоджуєтесь із наведеними нижче умовами.</p>
         <h2>Характер інформації</h2>
         <p>Уся інформація на сайті має ознайомчий характер і не є юридичною, податковою або фінансовою консультацією. Перед прийняттям рішень звертайтеся до відповідних спеціалістів.</p>

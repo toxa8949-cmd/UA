@@ -54,7 +54,7 @@ export default async function ServicePage({
       <div className="container max-w-3xl pb-16">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">{service.name}</h1>
+            <h1 className="text-3xl font-bold text-ink">{service.name}</h1>
             {service.category && <Badge className="mt-2">{service.category.name}</Badge>}
           </div>
           {service.rating != null && (
@@ -78,14 +78,14 @@ export default async function ServicePage({
         {service.pricing_summary && (
           <Card className="mt-6">
             <p className="text-sm text-slate-500">Ціни</p>
-            <p className="mt-1 font-medium text-slate-900">{service.pricing_summary}</p>
+            <p className="mt-1 font-medium text-ink">{service.pricing_summary}</p>
           </Card>
         )}
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {service.pros.length > 0 && (
             <Card>
-              <h2 className="font-semibold text-slate-900">Переваги</h2>
+              <h2 className="font-semibold text-ink">Переваги</h2>
               <ul className="mt-3 space-y-2">
                 {service.pros.map((p) => (
                   <li key={p} className="flex items-start gap-2 text-sm text-slate-600">
@@ -97,7 +97,7 @@ export default async function ServicePage({
           )}
           {service.cons.length > 0 && (
             <Card>
-              <h2 className="font-semibold text-slate-900">Недоліки</h2>
+              <h2 className="font-semibold text-ink">Недоліки</h2>
               <ul className="mt-3 space-y-2">
                 {service.cons.map((c) => (
                   <li key={c} className="flex items-start gap-2 text-sm text-slate-600">
@@ -111,11 +111,11 @@ export default async function ServicePage({
 
         {service.countries.length > 0 && (
           <div className="mt-6">
-            <h2 className="mb-2 font-semibold text-slate-900">Доступно в країнах</h2>
+            <h2 className="mb-2 font-semibold text-ink">Доступно в країнах</h2>
             <div className="flex flex-wrap gap-2">
               {service.countries.map((c) => (
                 <Link key={c.id} href={`/countries/${c.slug}`}>
-                  <Badge color="brand">{c.emoji} {c.name}</Badge>
+                  <Badge color="emerald">{c.emoji} {c.name}</Badge>
                 </Link>
               ))}
             </div>

@@ -74,7 +74,7 @@ export default async function ArticlePage({
             {article.country.emoji} {article.country.name}
           </Link>
         )}
-        <h1 className="mt-2 text-3xl font-bold leading-tight text-slate-900 md:text-4xl">
+        <h1 className="mt-2 text-3xl font-bold leading-tight text-ink md:text-4xl">
           {article.title}
         </h1>
         <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-slate-400">
@@ -94,7 +94,7 @@ export default async function ArticlePage({
 
       {related.length > 0 && (
         <div className="container max-w-5xl pb-16">
-          <h2 className="mb-4 text-xl font-bold text-slate-900">Схожі статті</h2>
+          <h2 className="mb-4 text-xl font-bold text-ink">Схожі статті</h2>
           <div className="grid gap-4 sm:grid-cols-3">
             {related.map((a) => <ArticleCard key={a.id} article={a} />)}
           </div>

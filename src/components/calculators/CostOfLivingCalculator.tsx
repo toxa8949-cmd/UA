@@ -48,8 +48,8 @@ export function CostOfLivingCalculator({ countries }: Props) {
 
   const level = useMemo(() => {
     const idx = country?.cost_of_living_index ?? 50;
-    if (totalEur < idx * 25) return { label: "Низький", color: "green" as const };
-    if (totalEur < idx * 45) return { label: "Середній", color: "accent" as const };
+    if (totalEur < idx * 25) return { label: "Низький", color: "emerald" as const };
+    if (totalEur < idx * 45) return { label: "Середній", color: "gold" as const };
     return { label: "Високий", color: "slate" as const };
   }, [totalEur, country]);
 
@@ -98,10 +98,10 @@ export function CostOfLivingCalculator({ countries }: Props) {
       </Card>
 
       <div className="space-y-4">
-        <Card className="bg-brand-600 text-white">
-          <p className="text-sm text-brand-100">Місячні витрати ({currency})</p>
+        <Card className="bg-emerald text-white">
+          <p className="text-sm text-emerald-50">Місячні витрати ({currency})</p>
           <p className="mt-1 text-3xl font-bold">{formatMoney(total, currency)}</p>
-          <p className="mt-1 text-brand-100">≈ {formatMoney(totalEur, "EUR")}</p>
+          <p className="mt-1 text-emerald-50">≈ {formatMoney(totalEur, "EUR")}</p>
           <div className="mt-4">
             <Badge color={level.color}>Рівень витрат: {level.label}</Badge>
           </div>

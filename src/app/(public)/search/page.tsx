@@ -40,7 +40,7 @@ export default function SearchPage() {
 
   return (
     <div className="container max-w-2xl pb-16 pt-8">
-      <h1 className="text-3xl font-bold text-slate-900">Пошук</h1>
+      <h1 className="text-3xl font-bold text-ink">Пошук</h1>
       <div className="relative mt-6">
         <SearchIcon size={18} className="absolute left-3 top-3.5 text-slate-400" />
         <input
@@ -63,7 +63,7 @@ export default function SearchPage() {
           <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400">Країни</h2>
           <div className="space-y-1">
             {results.countries.map((c) => (
-              <Link key={c.slug} href={`/countries/${c.slug}`} className="block rounded-lg px-3 py-2 hover:bg-slate-50">
+              <Link key={c.slug} href={`/countries/${c.slug}`} className="block rounded-lg px-3 py-2 hover:bg-sand-200/50">
                 {c.emoji} {c.name}
               </Link>
             ))}
@@ -76,7 +76,7 @@ export default function SearchPage() {
           <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400">Статті</h2>
           <div className="space-y-1">
             {results.articles.map((a) => (
-              <Link key={a.slug} href={`/articles/${a.slug}`} className="block rounded-lg px-3 py-2 hover:bg-slate-50">
+              <Link key={a.slug} href={`/articles/${a.slug}`} className="block rounded-lg px-3 py-2 hover:bg-sand-200/50">
                 <span className="font-medium text-slate-800">{a.title}</span>
                 {a.excerpt && <span className="block text-sm text-slate-500 line-clamp-1">{a.excerpt}</span>}
               </Link>
@@ -90,7 +90,7 @@ export default function SearchPage() {
           <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400">Сервіси</h2>
           <div className="space-y-1">
             {results.services.map((s) => (
-              <Link key={s.slug} href={`/services/${s.slug}`} className="block rounded-lg px-3 py-2 hover:bg-slate-50">
+              <Link key={s.slug} href={`/services/${s.slug}`} className="block rounded-lg px-3 py-2 hover:bg-sand-200/50">
                 <span className="font-medium text-slate-800">{s.name}</span>
               </Link>
             ))}
