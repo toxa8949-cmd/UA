@@ -4,6 +4,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { ArticleCard } from "@/components/article/ArticleCard";
 import { ServiceCard } from "@/components/service/ServiceCard";
+import { FaqAccordion } from "@/components/country/FaqAccordion";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Card } from "@/components/ui/Card";
 import {
@@ -74,20 +75,18 @@ export default async function CountryPage({
       : null,
   ].filter(Boolean) as { label: string; value: string }[];
 
-  const faqs = [
-    {
-      question: `Яка валюта в країні ${country.name}?`,
-      answer: country.currency ?? "—",
-    },
-    {
-      question: `Яка мова в країні ${country.name}?`,
-      answer: country.language ?? "—",
-    },
-  ];
+  // FAQ з бази (масив {q,a}); якщо порожній — мінімальний фолбек
+  const faqs =
+    country.faq && country.faq.length > 0
+      ? country.faq
+      : [
+          { q: `Яка валюта в країні ${country.name}?`, a: country.currency ?? "—" },
+          { q: `Яка мова в країні ${country.name}?`, a: country.language ?? "—" },
+        ];
 
   return (
     <>
-      <JsonLd data={faqJsonLd(faqs)} />
+      <JsonLd data={faqJsonLd(faqs.map((f) => ({ question: f.q, answer: f.a })))} />
       <Breadcrumbs
         items={[
           { name: "Головна", url: "/" },
@@ -157,6 +156,15 @@ export default async function CountryPage({
         <Section title={`Статті про країну ${country.name}`}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {articles.map((a) => <ArticleCard key={a.id} article={a} />)}
+          </div>
+        </Section>
+      )}
+
+      {/* FAQ */}
+      {country.faq && country.faq.length > 0 && (
+        <Section eyebrow="Питання" title="Часті запитання" className="bg-sand-200/50">
+          <div className="max-w-3xl">
+            <FaqAccordion faqs={country.faq} />
           </div>
         </Section>
       )}

@@ -24,6 +24,7 @@ export interface Country {
   healthcare_summary: string | null;
   education_summary: string | null;
   transport_summary: string | null;
+  faq: { q: string; a: string }[];
   status: ContentStatus;
   seo_title: string | null;
   seo_description: string | null;

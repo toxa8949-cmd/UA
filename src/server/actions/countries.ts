@@ -16,6 +16,21 @@ function str(formData: FormData, key: string): string | null {
   return v == null || v === "" ? null : String(v);
 }
 
+function parseFaq(raw: string | null): { q: string; a: string }[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed
+        .filter((x) => x && typeof x.q === "string" && typeof x.a === "string")
+        .map((x) => ({ q: x.q, a: x.a }));
+    }
+  } catch {
+    // ігноруємо некоректний JSON — лишаємо без змін краще не перетирати
+  }
+  return [];
+}
+
 export async function saveCountry(formData: FormData) {
   await requireAdmin();
   const supabase = createAdminSupabase();
@@ -37,6 +52,7 @@ export async function saveCountry(formData: FormData) {
     transport_summary: str(formData, "transport_summary"),
     seo_title: str(formData, "seo_title"),
     seo_description: str(formData, "seo_description"),
+    faq: parseFaq(str(formData, "faq")),
     updated_at: new Date().toISOString(),
   };
 

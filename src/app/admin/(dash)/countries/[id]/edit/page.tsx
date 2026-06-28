@@ -36,6 +36,12 @@ export default async function EditCountry({
         <TextArea label="Транспорт" name="transport_summary" defaultValue={c.transport_summary} rows={2} />
         <Field label="SEO Title" name="seo_title" defaultValue={c.seo_title} />
         <TextArea label="SEO Description" name="seo_description" defaultValue={c.seo_description} rows={2} />
+        <TextArea
+          label='FAQ (JSON: [{"q":"питання","a":"відповідь"}])'
+          name="faq"
+          defaultValue={c.faq ? JSON.stringify(c.faq, null, 2) : "[]"}
+          rows={10}
+        />
         <button className="rounded-lg bg-brand-600 px-5 py-2.5 font-medium text-white hover:bg-brand-700">Зберегти</button>
       </form>
     </div>
