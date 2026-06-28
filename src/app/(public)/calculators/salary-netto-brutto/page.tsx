@@ -10,6 +10,7 @@ export const metadata: Metadata = buildMetadata({
   title: "Калькулятор зарплати netto/brutto",
   description: "Приблизний розрахунок чистої зарплати після податків і соцвнесків у Польщі, Німеччині, Чехії, Іспанії та Португалії.",
   path: "/calculators/salary-netto-brutto",
+  ogEyebrow: "Калькулятор",
 });
 
 export default async function Page() {

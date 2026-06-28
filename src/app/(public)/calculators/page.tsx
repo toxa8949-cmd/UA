@@ -10,6 +10,7 @@ export const metadata: Metadata = buildMetadata({
   title: "Калькулятори для українців за кордоном",
   description: "Калькулятор вартості життя, бюджету переїзду та зарплати netto/brutto для Польщі, Німеччини, Чехії, Іспанії та Португалії.",
   path: "/calculators",
+  ogEyebrow: "Калькулятор",
 });
 
 export default function CalculatorsPage() {

@@ -11,6 +11,7 @@ export const metadata: Metadata = buildMetadata({
   title: "Калькулятор вартості життя за кордоном",
   description: "Порахуйте місячні витрати на життя у Польщі, Німеччині, Чехії, Іспанії чи Португалії: оренда, їжа, транспорт, медицина.",
   path: "/calculators/cost-of-living",
+  ogEyebrow: "Калькулятор",
 });
 
 export default async function Page() {

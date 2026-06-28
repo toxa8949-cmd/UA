@@ -31,10 +31,13 @@ export async function generateMetadata({
   const { slug } = await params;
   const country = await getCountryBySlug(slug);
   if (!country) return {};
+  const code = slug === "czech-republic" ? "CZ" : slug.slice(0, 2).toUpperCase();
   return buildMetadata({
     title: country.seo_title ?? `Життя в країні ${country.name}`,
     description: country.seo_description ?? country.short_description ?? undefined,
     path: `/countries/${slug}`,
+    ogEyebrow: "Країна",
+    ogCode: code,
   });
 }
 

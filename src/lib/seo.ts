@@ -7,6 +7,8 @@ type SeoParams = {
   path?: string;
   image?: string;
   noIndex?: boolean;
+  ogEyebrow?: string;
+  ogCode?: string;
 };
 
 export function buildMetadata({
@@ -15,11 +17,16 @@ export function buildMetadata({
   path = "/",
   image,
   noIndex,
+  ogEyebrow,
+  ogCode,
 }: SeoParams): Metadata {
   const fullTitle = title ? `${title} — ${SITE.name}` : SITE.name;
   const desc = description ?? SITE.description;
   const url = `${SITE.url}${path}`;
-  const ogImage = image ?? `${SITE.url}/api/og?title=${encodeURIComponent(title ?? SITE.name)}`;
+  const ogParams = new URLSearchParams({ title: title ?? SITE.name });
+  if (ogEyebrow) ogParams.set("eyebrow", ogEyebrow);
+  if (ogCode) ogParams.set("code", ogCode);
+  const ogImage = image ?? `${SITE.url}/api/og?${ogParams.toString()}`;
 
   return {
     title: fullTitle,

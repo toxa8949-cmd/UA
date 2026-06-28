@@ -11,6 +11,7 @@ export const metadata: Metadata = buildMetadata({
   title: "Калькулятор бюджету переїзду за кордон",
   description: "Оцініть, скільки коштів потрібно для переїзду: квитки, депозит, оренда, документи, страховка та резерв.",
   path: "/calculators/relocation-budget",
+  ogEyebrow: "Калькулятор",
 });
 
 export default async function Page() {

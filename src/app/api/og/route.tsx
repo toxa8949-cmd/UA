@@ -3,9 +3,17 @@ import { SITE } from "@/lib/constants";
 
 export const runtime = "edge";
 
+// Кольори бренду
+const INK = "#0B1F3A";
+const EMERALD = "#1B5E4A";
+const GOLD = "#E8C547";
+const SAND = "#F7F5F0";
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const title = (searchParams.get("title") ?? SITE.name).slice(0, 120);
+  const title = (searchParams.get("title") ?? SITE.name).slice(0, 110);
+  const eyebrow = searchParams.get("eyebrow")?.slice(0, 40) ?? "";
+  const code = searchParams.get("code")?.slice(0, 3) ?? "";
 
   return new ImageResponse(
     (
@@ -16,45 +24,89 @@ export async function GET(req: Request) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "linear-gradient(135deg, #1d4ed8 0%, #2563eb 60%, #1e40af 100%)",
-          padding: "70px",
+          background: INK,
+          padding: "72px",
           fontFamily: "sans-serif",
+          position: "relative",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        {/* Верх: лого + назва */}
+        <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
           <div
             style={{
-              width: "56px",
-              height: "56px",
+              width: "60px",
+              height: "60px",
               borderRadius: "14px",
               background: "#ffffff",
-              color: "#2563eb",
+              color: INK,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "34px",
-              fontWeight: 700,
+              fontSize: "36px",
+              fontWeight: 800,
             }}
           >
-            У
+            З
           </div>
-          <div style={{ color: "#dbeafe", fontSize: "28px" }}>{SITE.name}</div>
+          <div style={{ color: SAND, fontSize: "28px", fontWeight: 600 }}>{SITE.name}</div>
+
+          {/* Паспортний код країни, якщо є */}
+          {code && (
+            <div
+              style={{
+                marginLeft: "auto",
+                fontSize: "40px",
+                fontWeight: 800,
+                color: GOLD,
+                letterSpacing: "2px",
+              }}
+            >
+              {code}
+            </div>
+          )}
         </div>
 
-        <div
-          style={{
-            color: "#ffffff",
-            fontSize: "62px",
-            fontWeight: 700,
-            lineHeight: 1.15,
-            maxWidth: "1000px",
-          }}
-        >
-          {title}
+        {/* Центр: eyebrow + заголовок */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          {eyebrow && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                color: "#7FD1B4",
+                fontSize: "24px",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "3px",
+              }}
+            >
+              <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: GOLD }} />
+              {eyebrow}
+            </div>
+          )}
+          <div
+            style={{
+              color: "#ffffff",
+              fontSize: "64px",
+              fontWeight: 800,
+              lineHeight: 1.1,
+              maxWidth: "1000px",
+            }}
+          >
+            {title}
+          </div>
         </div>
 
-        <div style={{ color: "#bfdbfe", fontSize: "26px" }}>
-          Країни · документи · податки · житло · сервіси
+        {/* Низ: смуга-акцент + теги */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <div style={{ width: "60px", height: "6px", background: EMERALD, borderRadius: "3px" }} />
+            <div style={{ width: "20px", height: "6px", background: GOLD, borderRadius: "3px" }} />
+          </div>
+          <div style={{ color: "#9DB0C7", fontSize: "24px" }}>
+            Країни · документи · податки · житло · сервіси
+          </div>
         </div>
       </div>
     ),

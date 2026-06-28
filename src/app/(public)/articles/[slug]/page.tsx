@@ -34,6 +34,7 @@ export async function generateMetadata({
     title: article.seo_title ?? article.title,
     description: article.seo_description ?? article.excerpt ?? undefined,
     path: `/articles/${slug}`,
+    ogEyebrow: "Стаття",
   });
 }
 
