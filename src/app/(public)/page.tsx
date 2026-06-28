@@ -25,7 +25,7 @@ export default async function HomePage() {
       {/* ─── Hero ─── */}
       <section className="relative overflow-hidden border-b border-sand-300 bg-sand-100">
         <div className="container relative py-16 md:py-24">
-          <div className="max-w-3xl">
+          <div className="mx-auto max-w-3xl text-center">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white px-3 py-1 font-mono text-xs uppercase tracking-widest text-emerald">
               <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
               Гайд для українців у Європі
@@ -33,11 +33,11 @@ export default async function HomePage() {
             <h1 className="font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-ink md:text-6xl">
               Переїзд за кордон<br />без зайвого хаосу
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
               Документи, податки, житло й банки — зрозуміло і по ділу. Порівнюйте країни,
               рахуйте витрати, обирайте перевірені сервіси.
             </p>
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="mt-9 flex flex-wrap justify-center gap-3">
               <ButtonLink href="/countries" size="lg">Обрати країну</ButtonLink>
               <ButtonLink href="/calculators" size="lg" variant="outline">
                 Порахувати витрати
@@ -46,7 +46,7 @@ export default async function HomePage() {
           </div>
 
           {/* Підпис: смуга кодів країн */}
-          <div className="mt-14 flex flex-wrap gap-x-8 gap-y-4 border-t border-sand-300 pt-8">
+          <div className="mx-auto mt-14 flex max-w-3xl flex-wrap justify-center gap-x-8 gap-y-4 border-t border-sand-300 pt-8">
             {countries.map((c) => (
               <Link key={c.id} href={`/countries/${c.slug}`} className="group flex items-baseline gap-2">
                 <span className="font-mono text-2xl font-bold text-ink transition-colors group-hover:text-emerald">
