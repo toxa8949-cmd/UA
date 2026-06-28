@@ -52,6 +52,7 @@ export const MAIN_NAV = [
   { href: "/countries", label: "Країни" },
   { href: "/cities", label: "Міста" },
   { href: "/articles", label: "Статті" },
+  { href: "/news", label: "Новини" },
   { href: "/calculators", label: "Калькулятори" },
   { href: "/services", label: "Сервіси" },
   { href: "/deals", label: "Бонуси" },

@@ -108,6 +108,28 @@ export interface CityWithCountry extends City {
   country: Country | null;
 }
 
+
+export interface News {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string | null;
+  content: string;
+  country_id: string | null;
+  source_name: string | null;
+  source_url: string | null;
+  status: ContentStatus;
+  seo_title: string | null;
+  seo_description: string | null;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface NewsWithCountry extends News {
+  country: Country | null;
+}
+
 export interface Deal {
   id: string;
   title: string;

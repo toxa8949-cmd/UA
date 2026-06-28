@@ -12,6 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/countries",
     "/cities",
     "/articles",
+    "/news",
     "/calculators",
     "/services",
     "/deals",
@@ -39,11 +40,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // щоб білд не падав.
   try {
     const supabase = createPublicSupabase();
-    const [countries, articles, services, cities] = await Promise.all([
+    const [countries, articles, services, cities, news] = await Promise.all([
       supabase.from("countries").select("slug, updated_at").eq("status", "published"),
       supabase.from("articles").select("slug, updated_at").eq("status", "published"),
       supabase.from("services").select("slug, updated_at").eq("status", "published"),
       supabase.from("cities").select("slug, updated_at").eq("status", "published"),
+      supabase.from("news").select("slug, updated_at").eq("status", "published"),
     ]);
 
     type SlugRow = { slug: string; updated_at: string };
@@ -51,6 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const aRows = (articles.data ?? []) as SlugRow[];
     const sRows = (services.data ?? []) as SlugRow[];
     const cityRows = (cities.data ?? []) as SlugRow[];
+    const newsRows = (news.data ?? []) as SlugRow[];
 
     const dynamicPages = [
       ...cRows.map((c) => ({
@@ -76,6 +79,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(c.updated_at),
         changeFrequency: "weekly" as const,
         priority: 0.8,
+      })),
+      ...newsRows.map((n) => ({
+        url: `${base}/news/${n.slug}`,
+        lastModified: new Date(n.updated_at),
+        changeFrequency: "daily" as const,
+        priority: 0.6,
       })),
     ];
 

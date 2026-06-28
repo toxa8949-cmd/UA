@@ -7,6 +7,8 @@ import { Newsletter } from "@/components/home/Newsletter";
 import { getCountries } from "@/server/queries/countries";
 import { getArticles } from "@/server/queries/articles";
 import { getServices } from "@/server/queries/services";
+import { getNews } from "@/server/queries/news";
+import { formatDate } from "@/lib/format";
 import { CALCULATORS, COUNTRY_CODES } from "@/lib/constants";
 import { Calculator, ArrowRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
@@ -14,10 +16,11 @@ import Link from "next/link";
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  const [countries, articles, services] = await Promise.all([
+  const [countries, articles, services, news] = await Promise.all([
     getCountries(),
     getArticles({ limit: 6 }),
     getServices({ featured: true, limit: 4 }),
+    getNews({ limit: 4 }),
   ]);
 
   return (
@@ -104,6 +107,27 @@ export default async function HomePage() {
           action={<Link href="/services" className="flex items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">Каталог <ArrowRight size={15} /></Link>}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {services.map((s) => <ServiceCard key={s.id} service={s} />)}
+          </div>
+        </Section>
+      )}
+
+      {/* ─── Новини ─── */}
+      {news.length > 0 && (
+        <Section eyebrow="Свіже" title="Останні новини"
+          subtitle="Зміни правил, виплат і документів для українців за кордоном."
+          action={<Link href="/news" className="flex items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">Усі новини <ArrowRight size={15} /></Link>}>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {news.map((n) => (
+              <Link key={n.id} href={`/news/${n.slug}`}
+                className="group rounded-2xl border border-sand-300 bg-white p-5 transition-colors hover:border-emerald/40">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                  <time>{formatDate(n.published_at)}</time>
+                  {n.country && <span className="text-slate-600">· {n.country.emoji} {n.country.name}</span>}
+                </div>
+                <p className="mt-2 font-display font-semibold leading-snug text-ink">{n.title}</p>
+                {n.summary && <p className="mt-1 line-clamp-2 text-sm text-slate-600">{n.summary}</p>}
+              </Link>
+            ))}
           </div>
         </Section>
       )}
