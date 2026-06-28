@@ -82,6 +82,32 @@ export interface Service {
   updated_at: string;
 }
 
+
+export interface City {
+  id: string;
+  country_id: string;
+  name: string;
+  slug: string;
+  emoji: string | null;
+  short_description: string | null;
+  population: string | null;
+  average_rent: number | null;
+  average_salary: number | null;
+  cost_of_living_index: number | null;
+  full_description: string | null;
+  guides: Record<string, { title: string; body: string }[]>;
+  faq: { q: string; a: string }[];
+  status: ContentStatus;
+  seo_title: string | null;
+  seo_description: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CityWithCountry extends City {
+  country: Country | null;
+}
+
 export interface Deal {
   id: string;
   title: string;

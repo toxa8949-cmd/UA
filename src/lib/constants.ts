@@ -50,6 +50,7 @@ export const CALCULATORS = [
 
 export const MAIN_NAV = [
   { href: "/countries", label: "Країни" },
+  { href: "/cities", label: "Міста" },
   { href: "/articles", label: "Статті" },
   { href: "/calculators", label: "Калькулятори" },
   { href: "/services", label: "Сервіси" },

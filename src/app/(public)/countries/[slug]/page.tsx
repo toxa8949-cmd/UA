@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { ArticleCard } from "@/components/article/ArticleCard";
@@ -18,10 +19,12 @@ import {
 } from "@/server/queries/countries";
 import { getArticles } from "@/server/queries/articles";
 import { getServicesForCountry } from "@/server/queries/services";
+import { getCitiesForCountry } from "@/server/queries/cities";
 import { buildMetadata, faqJsonLd } from "@/lib/seo";
 import { RELATED_COUNTRIES } from "@/lib/constants";
 import { estimateCost } from "@/lib/costModel";
 import { formatMoney } from "@/lib/format";
+import { ArrowUpRight } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -65,10 +68,11 @@ export default async function CountryPage({
   const country = await getCountryBySlug(slug);
   if (!country) notFound();
 
-  const [articles, services, allCountries] = await Promise.all([
+  const [articles, services, allCountries, cities] = await Promise.all([
     getArticles({ countryId: country.id, limit: 6 }),
     getServicesForCountry(country.id, 6),
     getCountries(),
+    getCitiesForCountry(country.id, 8),
   ]);
 
   // Схожі країни (перелінковка)
@@ -223,6 +227,26 @@ export default async function CountryPage({
           </div>
         </Section>
         </div>
+      )}
+
+      {/* Міста */}
+      {cities.length > 0 && (
+        <Section eyebrow="Міста" title={`Міста країни ${country.name}`} className="bg-sand-200/50">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {cities.map((city) => (
+              <Link key={city.id} href={`/cities/${city.slug}`}
+                className="group rounded-2xl border border-sand-300 bg-white p-4 transition-colors hover:border-emerald/40">
+                <div className="flex items-center justify-between">
+                  <span className="font-display font-semibold text-ink">{city.name}</span>
+                  <ArrowUpRight size={15} className="text-emerald transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </div>
+                {city.average_rent != null && country.currency && (
+                  <p className="mt-1 text-xs text-slate-500">Оренда від {formatMoney(city.average_rent, country.currency)}</p>
+                )}
+              </Link>
+            ))}
+          </div>
+        </Section>
       )}
 
       {/* Схожі країни */}
