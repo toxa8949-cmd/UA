@@ -48,7 +48,7 @@ export default function SearchPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Введіть запит: країна, стаття, сервіс..."
-          className="w-full rounded-lg border border-slate-300 py-3 pl-10 pr-4 outline-none focus:border-brand-500"
+          className="w-full rounded-lg border border-slate-300 py-3 pl-10 pr-4 outline-none focus:border-emerald"
         />
       </div>
 

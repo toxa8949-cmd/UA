@@ -11,7 +11,7 @@ export default async function AdminArticles() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900">Статті</h1>
-        <Link href="/admin/articles/new" className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+        <Link href="/admin/articles/new" className="inline-flex items-center gap-2 rounded-lg bg-emerald px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
           <Plus size={16} /> Нова стаття
         </Link>
       </div>

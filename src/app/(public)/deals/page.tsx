@@ -37,7 +37,7 @@ export default async function DealsPage() {
                 <a
                   href={`/go/${d.slug}`}
                   rel="nofollow sponsored"
-                  className="mt-4 rounded-lg bg-brand-600 px-3 py-2 text-center text-sm font-medium text-white hover:bg-brand-700"
+                  className="mt-4 rounded-lg bg-emerald px-3 py-2 text-center text-sm font-medium text-white hover:bg-emerald-700"
                 >
                   Отримати бонус
                 </a>

@@ -55,11 +55,11 @@ export const MAIN_NAV = [
   { href: "/news", label: "Новини" },
   { href: "/calculators", label: "Калькулятори" },
   { href: "/services", label: "Сервіси" },
-  { href: "/deals", label: "Бонуси" },
-  { href: "/compare", label: "Порівняння" },
 ] as const;
 
 export const FOOTER_LINKS = [
+  { href: "/deals", label: "Бонуси" },
+  { href: "/compare", label: "Порівняння" },
   { href: "/about", label: "Про проєкт" },
   { href: "/contact", label: "Контакти" },
   { href: "/privacy-policy", label: "Політика конфіденційності" },

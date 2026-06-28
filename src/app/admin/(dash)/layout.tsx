@@ -34,7 +34,7 @@ export default async function DashLayout({
       <aside className="hidden w-60 shrink-0 border-r border-slate-200 bg-white md:block">
         <div className="p-5">
           <Link href="/admin" className="flex items-center gap-2 font-bold">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white">У</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-ink text-white">З</span>
             Адмінка
           </Link>
         </div>

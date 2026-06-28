@@ -41,7 +41,7 @@ export function ArticleForm({
       <TextArea label="SEO Description" name="seo_description" defaultValue={article?.seo_description} rows={2} />
       <StatusSelect defaultValue={article?.status} />
 
-      <button className="rounded-lg bg-brand-600 px-5 py-2.5 font-medium text-white hover:bg-brand-700">
+      <button className="rounded-lg bg-emerald px-5 py-2.5 font-medium text-white hover:bg-emerald-700">
         Зберегти
       </button>
     </form>

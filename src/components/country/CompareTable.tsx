@@ -46,7 +46,7 @@ export function CompareTable({ countries }: Props) {
               onClick={() => toggle(c.id)}
               className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
                 active
-                  ? "border-brand-600 bg-brand-50 text-brand-700"
+                  ? "border-emerald bg-emerald-50 text-emerald-700"
                   : "border-slate-300 text-slate-700 hover:bg-slate-50"
               }`}
             >

@@ -55,7 +55,7 @@ export function ServiceForm({
       </label>
 
       <StatusSelect defaultValue={service?.status} />
-      <button className="rounded-lg bg-brand-600 px-5 py-2.5 font-medium text-white hover:bg-brand-700">Зберегти</button>
+      <button className="rounded-lg bg-emerald px-5 py-2.5 font-medium text-white hover:bg-emerald-700">Зберегти</button>
     </form>
   );
 }
