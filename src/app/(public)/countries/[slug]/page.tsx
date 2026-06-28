@@ -5,6 +5,8 @@ import { Section } from "@/components/ui/Section";
 import { ArticleCard } from "@/components/article/ArticleCard";
 import { ServiceCard } from "@/components/service/ServiceCard";
 import { FaqAccordion } from "@/components/country/FaqAccordion";
+import { CountryGuideTabs, type GuideSection } from "@/components/country/CountryGuideTabs";
+import { CountryNav } from "@/components/country/CountryNav";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Card } from "@/components/ui/Card";
 import {
@@ -79,6 +81,18 @@ export default async function CountryPage({
   ].filter(Boolean) as { label: string; value: string }[];
 
   // FAQ з бази (масив {q,a}); якщо порожній — мінімальний фолбек
+  const guideSections: GuideSection[] = SECTIONS
+    .map((sec) => ({ key: sec.key, label: sec.label, text: (country[sec.key] ?? "").trim() }))
+    .filter((sec) => sec.text.length > 0);
+
+  const available = [
+    "overview",
+    guideSections.length > 0 ? "guide" : null,
+    services.length > 0 ? "services" : null,
+    articles.length > 0 ? "articles" : null,
+    country.faq && country.faq.length > 0 ? "faq" : null,
+  ].filter(Boolean) as string[];
+
   const faqs =
     country.faq && country.faq.length > 0
       ? country.faq
@@ -97,6 +111,8 @@ export default async function CountryPage({
           { name: country.name, url: `/countries/${slug}` },
         ]}
       />
+
+      <CountryNav available={available} />
 
       {/* Hero */}
       <section className="border-b border-sand-300 bg-sand-200/40">
@@ -119,7 +135,7 @@ export default async function CountryPage({
 
       {/* Stats */}
       {stats.length > 0 && (
-        <div className="container py-8">
+        <div id="overview" className="container scroll-mt-32 py-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((s) => (
               <Card key={s.label}>
@@ -131,45 +147,48 @@ export default async function CountryPage({
         </div>
       )}
 
-      {/* Guide sections */}
-      <div className="container grid gap-6 py-8 md:grid-cols-2">
-        {SECTIONS.map((s) => {
-          const text = country[s.key];
-          if (!text) return null;
-          return (
-            <Card key={s.key}>
-              <h2 className="font-semibold text-ink">{s.label}</h2>
-              <p className="mt-2 text-sm text-slate-600">{text}</p>
-            </Card>
-          );
-        })}
-      </div>
+      {/* Guide sections — таби */}
+      {guideSections.length > 0 && (
+        <div id="guide" className="container scroll-mt-32 py-10">
+          <div className="mb-6">
+            <div className="mb-2 font-mono text-xs uppercase tracking-widest text-emerald">Гайди</div>
+            <h2 className="font-display text-2xl font-bold text-ink">Все, що треба знати</h2>
+          </div>
+          <CountryGuideTabs sections={guideSections} />
+        </div>
+      )}
 
       {/* Services for country */}
       {services.length > 0 && (
+        <div id="services" className="scroll-mt-32">
         <Section title="Рекомендовані сервіси" className="bg-sand-200/50">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((s) => <ServiceCard key={s.id} service={s} />)}
           </div>
         </Section>
+        </div>
       )}
 
       {/* Articles for country */}
       {articles.length > 0 && (
+        <div id="articles" className="scroll-mt-32">
         <Section title={`Статті про країну ${country.name}`}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {articles.map((a) => <ArticleCard key={a.id} article={a} />)}
           </div>
         </Section>
+        </div>
       )}
 
       {/* FAQ */}
       {country.faq && country.faq.length > 0 && (
+        <div id="faq" className="scroll-mt-32">
         <Section eyebrow="Питання" title="Часті запитання" className="bg-sand-200/50">
           <div className="max-w-3xl">
             <FaqAccordion faqs={country.faq} />
           </div>
         </Section>
+        </div>
       )}
     </>
   );
