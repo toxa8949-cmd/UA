@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { CostOfLivingCalculator } from "@/components/calculators/CostOfLivingCalculator";
 import { getCountries } from "@/server/queries/countries";
+import { getEurRates } from "@/lib/currency";
 import { buildMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -13,7 +14,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function Page() {
-  const countries = await getCountries();
+  const [countries, rates] = await Promise.all([getCountries(), getEurRates()]);
   return (
     <>
       <Breadcrumbs items={[
@@ -27,7 +28,7 @@ export default async function Page() {
           Введіть свої витрати, щоб оцінити місячний бюджет та рівень витрат.
         </p>
         <div className="mt-8">
-          <CostOfLivingCalculator countries={countries} />
+          <CostOfLivingCalculator countries={countries} rates={rates} />
         </div>
       </div>
     </>

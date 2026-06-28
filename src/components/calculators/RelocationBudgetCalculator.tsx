@@ -3,10 +3,10 @@
 import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { formatMoney } from "@/lib/format";
-import { toEur } from "@/lib/currency";
+import { toEur, type Rates } from "@/lib/currency";
 import type { Country } from "@/types/db";
 
-type Props = { countries: Country[] };
+type Props = { countries: Country[]; rates?: Rates };
 
 const FIELDS = [
   { key: "tickets", label: "Квитки / дорога" },
@@ -20,7 +20,7 @@ const FIELDS = [
 
 type FieldKey = (typeof FIELDS)[number]["key"];
 
-export function RelocationBudgetCalculator({ countries }: Props) {
+export function RelocationBudgetCalculator({ countries, rates }: Props) {
   const [countryId, setCountryId] = useState(countries[0]?.id ?? "");
   const [people, setPeople] = useState(1);
   const [values, setValues] = useState<Record<FieldKey, number>>({
@@ -74,7 +74,7 @@ export function RelocationBudgetCalculator({ countries }: Props) {
         <Card className="bg-emerald text-white">
           <p className="text-sm text-emerald-50">Комфортний бюджет</p>
           <p className="mt-1 text-3xl font-bold">{formatMoney(comfort, currency)}</p>
-          <p className="mt-1 text-emerald-50">≈ {formatMoney(toEur(comfort, currency), "EUR")}</p>
+          <p className="mt-1 text-emerald-50">≈ {formatMoney(toEur(comfort, currency, rates), "EUR")}</p>
         </Card>
         <div className="grid grid-cols-2 gap-4">
           <Card>

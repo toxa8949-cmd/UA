@@ -4,10 +4,10 @@ import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { formatMoney } from "@/lib/format";
-import { toEur } from "@/lib/currency";
+import { toEur, type Rates } from "@/lib/currency";
 import type { Country } from "@/types/db";
 
-type Props = { countries: Country[] };
+type Props = { countries: Country[]; rates?: Rates };
 
 const FIELDS = [
   { key: "rent", label: "Оренда житла" },
@@ -21,7 +21,7 @@ const FIELDS = [
 
 type FieldKey = (typeof FIELDS)[number]["key"];
 
-export function CostOfLivingCalculator({ countries }: Props) {
+export function CostOfLivingCalculator({ countries, rates }: Props) {
   const [countryId, setCountryId] = useState(countries[0]?.id ?? "");
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
@@ -44,7 +44,7 @@ export function CostOfLivingCalculator({ countries }: Props) {
     () => Object.values(values).reduce((a, b) => a + (Number(b) || 0), 0),
     [values]
   );
-  const totalEur = toEur(total, currency);
+  const totalEur = toEur(total, currency, rates);
 
   const level = useMemo(() => {
     const idx = country?.cost_of_living_index ?? 50;
@@ -113,7 +113,7 @@ export function CostOfLivingCalculator({ countries }: Props) {
             {adults} дорослих{children > 0 ? `, ${children} дітей` : ""}
           </p>
           <p className="mt-3 text-sm text-slate-500">
-            Розрахунок орієнтовний. Курс конвертації наближений. Для точних цифр
+            Розрахунок орієнтовний. Курс EUR оновлюється щодня за даними ЄЦБ. Для точних цифр
             враховуйте конкретне місто та особисті звички.
           </p>
         </Card>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { RelocationBudgetCalculator } from "@/components/calculators/RelocationBudgetCalculator";
 import { getCountries } from "@/server/queries/countries";
+import { getEurRates } from "@/lib/currency";
 import { buildMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -13,7 +14,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function Page() {
-  const countries = await getCountries();
+  const [countries, rates] = await Promise.all([getCountries(), getEurRates()]);
   return (
     <>
       <Breadcrumbs items={[
@@ -27,7 +28,7 @@ export default async function Page() {
           Порахуйте мінімальний, комфортний та ризиковий бюджет для переїзду.
         </p>
         <div className="mt-8">
-          <RelocationBudgetCalculator countries={countries} />
+          <RelocationBudgetCalculator countries={countries} rates={rates} />
         </div>
       </div>
     </>
