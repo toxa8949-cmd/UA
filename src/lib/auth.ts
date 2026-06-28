@@ -1,5 +1,5 @@
 import { createServerSupabase } from "./supabase";
-import type { Role } from "@prisma/client";
+import type { Role } from "@/types/db";
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
   .split(",")
@@ -20,11 +20,11 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   } = await supabase.auth.getUser();
   if (!user?.email) return null;
 
-  const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
+  const isAdminUser = ADMIN_EMAILS.includes(user.email.toLowerCase());
   return {
     id: user.id,
     email: user.email,
-    role: isAdmin ? "admin" : "viewer",
+    role: isAdminUser ? "admin" : "viewer",
   };
 }
 

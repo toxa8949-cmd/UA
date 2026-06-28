@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { prisma } from "@/lib/prisma";
+import { createPublicSupabase } from "@/lib/supabase";
 import { SITE, CALCULATORS } from "@/lib/constants";
 
 export const revalidate = 3600;
@@ -34,41 +34,44 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  const [countries, articles, services] = await Promise.all([
-    prisma.country.findMany({
-      where: { status: "published" },
-      select: { slug: true, updatedAt: true },
-    }),
-    prisma.article.findMany({
-      where: { status: "published" },
-      select: { slug: true, updatedAt: true },
-    }),
-    prisma.service.findMany({
-      where: { status: "published" },
-      select: { slug: true, updatedAt: true },
-    }),
-  ]);
+  // Якщо БД ще не готова або немає env — повертаємо лише статичні сторінки,
+  // щоб білд не падав.
+  try {
+    const supabase = createPublicSupabase();
+    const [countries, articles, services] = await Promise.all([
+      supabase.from("countries").select("slug, updated_at").eq("status", "published"),
+      supabase.from("articles").select("slug, updated_at").eq("status", "published"),
+      supabase.from("services").select("slug, updated_at").eq("status", "published"),
+    ]);
 
-  return [
-    ...staticPages,
-    ...calcPages,
-    ...countries.map((c) => ({
-      url: `${base}/countries/${c.slug}`,
-      lastModified: c.updatedAt,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    })),
-    ...articles.map((a) => ({
-      url: `${base}/articles/${a.slug}`,
-      lastModified: a.updatedAt,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    })),
-    ...services.map((s) => ({
-      url: `${base}/services/${s.slug}`,
-      lastModified: s.updatedAt,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
-  ];
+    type SlugRow = { slug: string; updated_at: string };
+    const cRows = (countries.data ?? []) as SlugRow[];
+    const aRows = (articles.data ?? []) as SlugRow[];
+    const sRows = (services.data ?? []) as SlugRow[];
+
+    const dynamicPages = [
+      ...cRows.map((c) => ({
+        url: `${base}/countries/${c.slug}`,
+        lastModified: new Date(c.updated_at),
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      })),
+      ...aRows.map((a) => ({
+        url: `${base}/articles/${a.slug}`,
+        lastModified: new Date(a.updated_at),
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      })),
+      ...sRows.map((s) => ({
+        url: `${base}/services/${s.slug}`,
+        lastModified: new Date(s.updated_at),
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      })),
+    ];
+
+    return [...staticPages, ...calcPages, ...dynamicPages];
+  } catch {
+    return [...staticPages, ...calcPages];
+  }
 }
