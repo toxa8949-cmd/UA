@@ -6,8 +6,6 @@ import { SITE } from "@/lib/constants";
 import { GA_ID } from "@/lib/analytics";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { websiteJsonLd, organizationJsonLd } from "@/lib/seo";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -34,9 +32,7 @@ export default function RootLayout({
       <body>
         <JsonLd data={websiteJsonLd()} />
         <JsonLd data={organizationJsonLd()} />
-        <Header />
-        <div className="min-h-[60vh]">{children}</div>
-        <Footer />
+        {children}
         {GA_ID && (
           <>
             <Script
