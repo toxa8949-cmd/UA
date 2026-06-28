@@ -7,11 +7,11 @@ import { Card } from "@/components/ui/Card";
 import { FaqAccordion } from "@/components/country/FaqAccordion";
 import { CountryGuideTabs, type GuideSection } from "@/components/country/CountryGuideTabs";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getCityBySlug, getCitySlugs } from "@/server/queries/cities";
+import { getCityBySlug, getCitySlugs, getCitiesForCountry } from "@/server/queries/cities";
 import { renderMarkdown } from "@/lib/markdown";
 import { buildMetadata, faqJsonLd } from "@/lib/seo";
 import { formatMoney } from "@/lib/format";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -54,6 +54,11 @@ export default async function CityPage({
   if (!city) notFound();
 
   const currency = city.country?.currency ?? "EUR";
+
+  // Інші міста тієї ж країни (для перелінковки)
+  const otherCities = city.country
+    ? (await getCitiesForCountry(city.country_id, 12)).filter((c) => c.slug !== city.slug)
+    : [];
 
   const stats = [
     city.average_salary != null ? { label: "Середня зарплата", value: formatMoney(city.average_salary, currency) } : null,
@@ -148,6 +153,31 @@ export default async function CityPage({
         <Section eyebrow="Питання" title="Часті запитання" className="bg-sand-200/50">
           <div className="max-w-3xl">
             <FaqAccordion faqs={city.faq} />
+          </div>
+        </Section>
+      )}
+
+      {/* Інші міста країни */}
+      {otherCities.length > 0 && city.country && (
+        <Section eyebrow="Поряд" title={`Інші міста країни ${city.country.name}`}>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {otherCities.map((c) => (
+              <Link
+                key={c.id}
+                href={`/cities/${c.slug}`}
+                className="group rounded-2xl border border-sand-300 bg-white p-4 transition-colors hover:border-emerald/40"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-display font-semibold text-ink">{c.name}</span>
+                  <ArrowUpRight size={15} className="text-emerald transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </div>
+                {c.average_rent != null && (
+                  <p className="mt-1 text-xs text-slate-500">
+                    Оренда від {formatMoney(c.average_rent, currency)}
+                  </p>
+                )}
+              </Link>
+            ))}
           </div>
         </Section>
       )}
