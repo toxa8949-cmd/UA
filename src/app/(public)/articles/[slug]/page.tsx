@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ArticleCard } from "@/components/article/ArticleCard";
+import { TableOfContents } from "@/components/article/TableOfContents";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getArticleBySlug,
@@ -46,7 +47,7 @@ export default async function ArticlePage({
   if (!article) notFound();
 
   const related = await getRelatedArticles(article.country_id, slug, 3);
-  const html = renderMarkdown(article.content);
+  const { html, toc } = renderMarkdown(article.content);
 
   return (
     <>
@@ -68,37 +69,65 @@ export default async function ArticlePage({
         ]}
       />
 
-      <article className="container max-w-3xl pb-16">
-        {article.country && (
-          <Link href={`/countries/${article.country.slug}`} className="text-sm font-medium text-brand-600 hover:text-brand-700">
-            {article.country.emoji} {article.country.name}
-          </Link>
-        )}
-        <h1 className="mt-2 text-3xl font-bold leading-tight text-ink md:text-4xl">
-          {article.title}
-        </h1>
-        <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-slate-400">
-          {article.reading_time != null && (
-            <span className="flex items-center gap-1"><Clock size={14} /> {article.reading_time} хв</span>
-          )}
-          {article.published_at && <span>Оновлено: {formatDate(article.published_at)}</span>}
-        </div>
+      <div className="container pb-20">
+        <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[1fr_220px]">
+          {/* ─── Стаття ─── */}
+          <article className="min-w-0 max-w-2xl">
+            {article.country && (
+              <Link
+                href={`/countries/${article.country.slug}`}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald hover:text-emerald-700"
+              >
+                {article.country.emoji} {article.country.name}
+              </Link>
+            )}
+            <h1 className="mt-3 font-display text-3xl font-bold leading-[1.15] text-ink md:text-[2.5rem]">
+              {article.title}
+            </h1>
+            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-slate-500">
+              {article.reading_time != null && (
+                <span className="flex items-center gap-1.5">
+                  <Clock size={14} /> {article.reading_time} хв читання
+                </span>
+              )}
+              {article.published_at && <span>Оновлено: {formatDate(article.published_at)}</span>}
+            </div>
 
-        <div className="prose-content mt-8" dangerouslySetInnerHTML={{ __html: html }} />
+            {article.excerpt && (
+              <p className="mt-6 border-l-2 border-emerald pl-4 text-lg leading-relaxed text-slate-600">
+                {article.excerpt}
+              </p>
+            )}
 
-        <div className="mt-10 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
-          Інформація має ознайомчий характер і не є юридичною, податковою чи фінансовою консультацією.
-          Матеріал може містити партнерські посилання.
+            <div
+              className="prose-content mt-8 scroll-mt-24"
+              dangerouslySetInnerHTML={{ __html: html }}
+            />
+
+            <div className="mt-12 rounded-2xl border border-sand-300 bg-sand-200/40 p-5 text-sm leading-relaxed text-slate-500">
+              Інформація має ознайомчий характер і не є юридичною, податковою чи фінансовою
+              консультацією. Матеріал може містити партнерські посилання.
+            </div>
+          </article>
+
+          {/* ─── Зміст (sticky, тільки десктоп) ─── */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-24">
+              <TableOfContents items={toc} />
+            </div>
+          </aside>
         </div>
-      </article>
+      </div>
 
       {related.length > 0 && (
-        <div className="container max-w-5xl pb-16">
-          <h2 className="mb-4 text-xl font-bold text-ink">Схожі статті</h2>
-          <div className="grid gap-4 sm:grid-cols-3">
-            {related.map((a) => <ArticleCard key={a.id} article={a} />)}
+        <section className="border-t border-sand-300 bg-sand-200/30 py-14">
+          <div className="container max-w-5xl">
+            <h2 className="mb-6 font-display text-2xl font-bold text-ink">Схожі статті</h2>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {related.map((a) => <ArticleCard key={a.id} article={a} />)}
+            </div>
           </div>
-        </div>
+        </section>
       )}
     </>
   );
