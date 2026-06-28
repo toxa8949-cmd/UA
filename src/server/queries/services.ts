@@ -77,3 +77,35 @@ export async function getDeals(limit?: number): Promise<Deal[]> {
   const { data } = await query;
   return (data ?? []) as Deal[];
 }
+
+// Усі опубліковані сервіси з категорією та країнами — для клієнтського фільтра каталогу
+export async function getServicesWithRelations(): Promise<ServiceWithRelations[]> {
+  const supabase = createPublicSupabase();
+  const { data } = await supabase
+    .from("services")
+    .select("*, category:categories(*), service_countries(country:countries(*))")
+    .eq("status", "published")
+    .order("is_featured", { ascending: false })
+    .order("rating", { ascending: false });
+
+  type Row = Service & {
+    category: ServiceWithRelations["category"];
+    service_countries: { country: Country }[];
+  };
+
+  return ((data ?? []) as unknown as Row[]).map((row) => ({
+    ...row,
+    countries: (row.service_countries ?? []).map((sc) => sc.country).filter(Boolean),
+  }));
+}
+
+// Категорії сервісів (для фільтра)
+export async function getServiceCategories() {
+  const supabase = createPublicSupabase();
+  const { data } = await supabase
+    .from("categories")
+    .select("id, name, slug")
+    .eq("type", "service")
+    .order("name");
+  return (data ?? []) as { id: string; name: string; slug: string }[];
+}
