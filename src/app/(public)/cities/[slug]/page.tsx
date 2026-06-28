@@ -132,8 +132,13 @@ export default async function CityPage({
 
       {/* Розгорнутий опис */}
       {html && (
-        <div className="container py-6">
-          <div className="prose-content max-w-3xl" dangerouslySetInnerHTML={{ __html: html }} />
+        <div className="container py-8">
+          <div className="max-w-3xl">
+            <div className="mb-4 font-mono text-xs uppercase tracking-widest text-emerald">
+              Про місто
+            </div>
+            <div className="prose-content" dangerouslySetInnerHTML={{ __html: html }} />
+          </div>
         </div>
       )}
 

@@ -27,12 +27,18 @@
     @apply max-w-none text-[17px] leading-[1.75] text-slate-700;
   }
   .prose-content h2 {
-    @apply mt-12 mb-4 scroll-mt-24 font-display text-2xl font-bold text-ink;
+    @apply relative mt-12 mb-4 scroll-mt-24 pl-4 font-display text-2xl font-bold text-ink;
+  }
+  .prose-content h2::before {
+    content: "";
+    @apply absolute left-0 top-1 bottom-1 w-1 rounded-full bg-emerald;
   }
   .prose-content h3 {
     @apply mt-8 mb-3 scroll-mt-24 font-display text-xl font-semibold text-ink;
   }
   .prose-content p { @apply mb-5; }
+  /* Перший абзац — трохи більший, як вступ */
+  .prose-content > p:first-of-type { @apply text-[18px] text-slate-600; }
   .prose-content ul { @apply mb-5 ml-5 list-disc space-y-2 marker:text-emerald; }
   .prose-content ol { @apply mb-5 ml-5 list-decimal space-y-2 marker:text-emerald; }
   .prose-content a { @apply font-medium text-emerald underline decoration-emerald/30 underline-offset-2 hover:decoration-emerald; }
