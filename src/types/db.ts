@@ -25,6 +25,7 @@ export interface Country {
   education_summary: string | null;
   transport_summary: string | null;
   faq: { q: string; a: string }[];
+  guides: Record<string, { title: string; body: string }[]>;
   status: ContentStatus;
   seo_title: string | null;
   seo_description: string | null;

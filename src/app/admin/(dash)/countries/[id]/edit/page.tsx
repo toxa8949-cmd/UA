@@ -42,6 +42,12 @@ export default async function EditCountry({
           defaultValue={c.faq ? JSON.stringify(c.faq, null, 2) : "[]"}
           rows={10}
         />
+        <TextArea
+          label='Гайди (JSON: {"tax":[{"title":"ФОП","body":"..."}], ...})'
+          name="guides"
+          defaultValue={c.guides ? JSON.stringify(c.guides, null, 2) : "{}"}
+          rows={14}
+        />
         <button className="rounded-lg bg-brand-600 px-5 py-2.5 font-medium text-white hover:bg-brand-700">Зберегти</button>
       </form>
     </div>

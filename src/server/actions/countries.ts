@@ -16,6 +16,27 @@ function str(formData: FormData, key: string): string | null {
   return v == null || v === "" ? null : String(v);
 }
 
+function parseGuides(raw: string | null): Record<string, { title: string; body: string }[]> {
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      const out: Record<string, { title: string; body: string }[]> = {};
+      for (const [k, v] of Object.entries(parsed)) {
+        if (Array.isArray(v)) {
+          out[k] = v
+            .filter((x: unknown) => x && typeof (x as { title?: unknown }).title === "string" && typeof (x as { body?: unknown }).body === "string")
+            .map((x) => ({ title: (x as { title: string }).title, body: (x as { body: string }).body }));
+        }
+      }
+      return out;
+    }
+  } catch {
+    // некоректний JSON — повертаємо порожнє
+  }
+  return {};
+}
+
 function parseFaq(raw: string | null): { q: string; a: string }[] {
   if (!raw) return [];
   try {
@@ -53,6 +74,7 @@ export async function saveCountry(formData: FormData) {
     seo_title: str(formData, "seo_title"),
     seo_description: str(formData, "seo_description"),
     faq: parseFaq(str(formData, "faq")),
+    guides: parseGuides(str(formData, "guides")),
     updated_at: new Date().toISOString(),
   };
 

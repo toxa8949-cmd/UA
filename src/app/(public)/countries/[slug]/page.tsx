@@ -44,11 +44,11 @@ export async function generateMetadata({
 }
 
 const SECTIONS = [
-  { key: "business_summary", label: "Документи та бізнес" },
-  { key: "tax_summary", label: "Податки" },
-  { key: "healthcare_summary", label: "Медицина" },
-  { key: "education_summary", label: "Освіта" },
-  { key: "transport_summary", label: "Транспорт" },
+  { key: "business_summary", guideKey: "business", label: "Документи та бізнес" },
+  { key: "tax_summary", guideKey: "tax", label: "Податки" },
+  { key: "healthcare_summary", guideKey: "healthcare", label: "Медицина" },
+  { key: "education_summary", guideKey: "education", label: "Освіта" },
+  { key: "transport_summary", guideKey: "transport", label: "Транспорт" },
 ] as const;
 
 export default async function CountryPage({
@@ -81,9 +81,14 @@ export default async function CountryPage({
   ].filter(Boolean) as { label: string; value: string }[];
 
   // FAQ з бази (масив {q,a}); якщо порожній — мінімальний фолбек
+  const guides = country.guides ?? {};
   const guideSections: GuideSection[] = SECTIONS
-    .map((sec) => ({ key: sec.key, label: sec.label, text: (country[sec.key] ?? "").trim() }))
-    .filter((sec) => sec.text.length > 0);
+    .map((sec) => {
+      const items = Array.isArray(guides[sec.guideKey]) ? guides[sec.guideKey] : [];
+      const summary = (country[sec.key] ?? "").trim();
+      return { key: sec.key, label: sec.label, summary, items };
+    })
+    .filter((sec) => sec.items.length > 0 || sec.summary.length > 0);
 
   const available = [
     "overview",
