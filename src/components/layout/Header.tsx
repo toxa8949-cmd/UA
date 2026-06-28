@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Search } from "lucide-react";
 import { MAIN_NAV, SITE } from "@/lib/constants";
 import { MobileNav } from "./MobileNav";
 
@@ -21,6 +22,13 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+          <Link
+            href="/search"
+            aria-label="Пошук"
+            className="rounded-lg p-2 text-slate-700 hover:bg-slate-100"
+          >
+            <Search size={18} />
+          </Link>
         </nav>
 
         <MobileNav />
