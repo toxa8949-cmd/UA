@@ -72,3 +72,12 @@ export const COUNTRY_CODES: Record<string, string> = {
   spain: "ES",
   portugal: "PT",
 };
+
+// Перелінковка: схожі/суміжні країни для кожної (для SEO та навігації)
+export const RELATED_COUNTRIES: Record<string, string[]> = {
+  poland: ["czech-republic", "germany"],
+  germany: ["poland", "czech-republic"],
+  "czech-republic": ["poland", "germany"],
+  spain: ["portugal", "germany"],
+  portugal: ["spain", "germany"],
+};

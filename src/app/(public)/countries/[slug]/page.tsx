@@ -7,15 +7,20 @@ import { ServiceCard } from "@/components/service/ServiceCard";
 import { FaqAccordion } from "@/components/country/FaqAccordion";
 import { CountryGuideTabs, type GuideSection } from "@/components/country/CountryGuideTabs";
 import { CountryNav } from "@/components/country/CountryNav";
+import { RelatedCountries } from "@/components/country/RelatedCountries";
+import { CostOfLivingBlock } from "@/components/country/CostOfLivingBlock";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Card } from "@/components/ui/Card";
 import {
   getCountryBySlug,
   getCountrySlugs,
+  getCountries,
 } from "@/server/queries/countries";
 import { getArticles } from "@/server/queries/articles";
 import { getServicesForCountry } from "@/server/queries/services";
 import { buildMetadata, faqJsonLd } from "@/lib/seo";
+import { RELATED_COUNTRIES } from "@/lib/constants";
+import { estimateCost } from "@/lib/costModel";
 import { formatMoney } from "@/lib/format";
 
 export const revalidate = 3600;
@@ -60,10 +65,21 @@ export default async function CountryPage({
   const country = await getCountryBySlug(slug);
   if (!country) notFound();
 
-  const [articles, services] = await Promise.all([
+  const [articles, services, allCountries] = await Promise.all([
     getArticles({ countryId: country.id, limit: 6 }),
     getServicesForCountry(country.id, 6),
+    getCountries(),
   ]);
+
+  // Схожі країни (перелінковка)
+  const relatedSlugs = RELATED_COUNTRIES[country.slug] ?? [];
+  const relatedCountries = relatedSlugs
+    .map((sl) => allCountries.find((c) => c.slug === sl))
+    .filter(Boolean) as typeof allCountries;
+
+  // Орієнтовна вартість життя (одинак / сім'я) для блоку-карток
+  const single = estimateCost(country, { adults: 1, children: 0, lifestyle: "standard", city: "capital" });
+  const family = estimateCost(country, { adults: 2, children: 2, lifestyle: "standard", city: "capital" });
 
   const stats = [
     country.average_salary != null && country.currency
@@ -149,6 +165,19 @@ export default async function CountryPage({
               </Card>
             ))}
           </div>
+
+          {/* Орієнтовна вартість життя */}
+          {country.currency && (
+            <div className="mt-8">
+              <h2 className="mb-4 font-display text-xl font-bold text-ink">Скільки коштує життя</h2>
+              <CostOfLivingBlock
+                single={single}
+                family={family}
+                currency={country.currency}
+                averageSalary={country.average_salary}
+              />
+            </div>
+          )}
         </div>
       )}
 
@@ -194,6 +223,13 @@ export default async function CountryPage({
           </div>
         </Section>
         </div>
+      )}
+
+      {/* Схожі країни */}
+      {relatedCountries.length > 0 && (
+        <Section eyebrow="Куди ще" title="Схожі країни">
+          <RelatedCountries countries={relatedCountries} />
+        </Section>
       )}
     </>
   );
