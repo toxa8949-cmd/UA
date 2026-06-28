@@ -158,27 +158,33 @@ export default async function CountryPage({
         </div>
       </section>
 
-      {/* Stats */}
-      {stats.length > 0 && (
-        <div id="overview" className="container scroll-mt-32 py-8">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((s) => (
-              <Card key={s.label}>
-                <p className="text-sm text-slate-500">{s.label}</p>
-                <p className="mt-1 text-xl font-bold text-ink">{s.value}</p>
-              </Card>
-            ))}
-          </div>
+      {/* Overview: факти + вартість життя (одна секція) */}
+      {(stats.length > 0 || country.currency) && (
+        <div id="overview" className="container scroll-mt-32 py-10">
+          {/* Компактний рядок ключових фактів */}
+          {stats.length > 0 && (
+            <div className="grid grid-cols-2 divide-sand-300 rounded-2xl border border-sand-300 bg-white sm:grid-cols-4 sm:divide-x">
+              {stats.map((s) => (
+                <div key={s.label} className="px-5 py-4">
+                  <p className="text-xs text-slate-500">{s.label}</p>
+                  <p className="mt-1 font-display text-lg font-bold text-ink">{s.value}</p>
+                </div>
+              ))}
+            </div>
+          )}
 
-          {/* Орієнтовна вартість життя */}
+          {/* Вартість життя */}
           {country.currency && (
             <div className="mt-8">
-              <h2 className="mb-4 font-display text-xl font-bold text-ink">Скільки коштує життя</h2>
+              <h2 className="mb-1 font-display text-xl font-bold text-ink">Скільки коштує життя</h2>
+              <p className="mb-4 text-sm text-slate-500">
+                Орієнтовні щомісячні витрати для різного складу сім'ї
+              </p>
               <CostOfLivingBlock
                 single={single}
                 family={family}
                 currency={country.currency}
-                averageSalary={country.average_salary}
+                averageSalary={null}
               />
             </div>
           )}

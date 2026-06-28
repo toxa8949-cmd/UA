@@ -24,7 +24,7 @@ export function CostOfLivingBlock({
 
   return (
     <div>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className={`grid gap-4 ${cards.length === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
         {cards.map((c) => (
           <div key={c.label} className="rounded-2xl border border-sand-300 bg-white p-5">
             <p className="text-sm text-slate-500">{c.label}</p>
