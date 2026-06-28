@@ -62,3 +62,14 @@ export async function getRelatedArticles(
     .limit(limit);
   return (data ?? []) as Article[];
 }
+
+// Категорії статей (для фільтра каталогу)
+export async function getArticleCategories() {
+  const supabase = createPublicSupabase();
+  const { data } = await supabase
+    .from("categories")
+    .select("id, name, slug")
+    .eq("type", "article")
+    .order("name");
+  return (data ?? []) as { id: string; name: string; slug: string }[];
+}
