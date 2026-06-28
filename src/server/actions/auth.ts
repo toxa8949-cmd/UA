@@ -2,35 +2,29 @@
 
 import { createServerSupabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
-import { SITE } from "@/lib/constants";
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
   .split(",")
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
 
-export async function signInWithEmail(
-  _prev: { error?: string; ok?: boolean },
+export async function signInWithPassword(
+  _prev: { error?: string },
   formData: FormData
-): Promise<{ error?: string; ok?: boolean }> {
+): Promise<{ error?: string }> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  if (!email) return { error: "Введіть email" };
+  const password = String(formData.get("password") ?? "");
 
-  // Дозволяємо вхід лише адмінам
+  if (!email || !password) return { error: "Введіть email і пароль" };
   if (!ADMIN_EMAILS.includes(email)) {
     return { error: "Цей email не має доступу до адмінки" };
   }
 
   const supabase = await createServerSupabase();
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      emailRedirectTo: `${SITE.url}/admin`,
-    },
-  });
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) return { error: "Невірний email або пароль" };
 
-  if (error) return { error: "Не вдалося надіслати лист. Спробуйте ще раз." };
-  return { ok: true };
+  redirect("/admin");
 }
 
 export async function signOut() {
