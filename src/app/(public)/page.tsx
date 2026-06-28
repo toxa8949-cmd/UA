@@ -23,36 +23,36 @@ export default async function HomePage() {
   return (
     <>
       {/* ─── Hero ─── */}
-      <section className="relative overflow-hidden border-b border-sand-300 bg-ink">
-        <div className="container relative py-20 md:py-28">
+      <section className="relative overflow-hidden border-b border-sand-300 bg-sand-100">
+        <div className="container relative py-16 md:py-24">
           <div className="max-w-3xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-1 font-mono text-xs uppercase tracking-widest text-emerald-50/90">
-              <span className="h-1.5 w-1.5 rounded-full bg-gold-400" />
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white px-3 py-1 font-mono text-xs uppercase tracking-widest text-emerald">
+              <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
               Гайд для українців у Європі
             </div>
-            <h1 className="font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-white md:text-6xl">
+            <h1 className="font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-ink md:text-6xl">
               Переїзд за кордон<br />без зайвого хаосу
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-sand-100/80">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
               Документи, податки, житло й банки — зрозуміло і по ділу. Порівнюйте країни,
               рахуйте витрати, обирайте перевірені сервіси.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <ButtonLink href="/countries" size="lg">Обрати країну</ButtonLink>
-              <ButtonLink href="/calculators" size="lg" variant="outline" className="border-white/25 text-white hover:bg-white/10">
+              <ButtonLink href="/calculators" size="lg" variant="outline">
                 Порахувати витрати
               </ButtonLink>
             </div>
           </div>
 
           {/* Підпис: смуга кодів країн */}
-          <div className="mt-16 flex flex-wrap gap-x-8 gap-y-4 border-t border-white/10 pt-8">
+          <div className="mt-14 flex flex-wrap gap-x-8 gap-y-4 border-t border-sand-300 pt-8">
             {countries.map((c) => (
               <Link key={c.id} href={`/countries/${c.slug}`} className="group flex items-baseline gap-2">
-                <span className="font-mono text-2xl font-bold text-white transition-colors group-hover:text-gold-400">
+                <span className="font-mono text-2xl font-bold text-ink transition-colors group-hover:text-emerald">
                   {COUNTRY_CODES[c.slug] ?? c.slug.slice(0, 2).toUpperCase()}
                 </span>
-                <span className="text-sm text-sand-100/60 group-hover:text-sand-100">{c.name}</span>
+                <span className="text-sm text-slate-500 group-hover:text-slate-700">{c.name}</span>
               </Link>
             ))}
           </div>
