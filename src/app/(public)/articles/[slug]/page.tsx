@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ArticleCard } from "@/components/article/ArticleCard";
 import { TableOfContents } from "@/components/article/TableOfContents";
+import { CountryCalculators } from "@/components/countries/CountryCalculators";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getArticleBySlug,
@@ -105,6 +106,10 @@ export default async function ArticlePage({
               dangerouslySetInnerHTML={{ __html: html }}
             />
 
+            {article.country && (
+              <CountryCalculators countrySlug={article.country.slug} />
+            )}
+
             <div className="mt-12 rounded-2xl border border-sand-300 bg-sand-200/40 p-5 text-sm leading-relaxed text-slate-500">
               Інформація має ознайомчий характер і не є юридичною, податковою чи фінансовою
               консультацією. Матеріал може містити партнерські посилання.
@@ -113,8 +118,11 @@ export default async function ArticlePage({
 
           {/* ─── Зміст (sticky, тільки десктоп) ─── */}
           <aside className="hidden lg:block">
-            <div className="sticky top-24">
+            <div className="sticky top-24 space-y-6">
               <TableOfContents items={toc} />
+              {article.country && (
+                <CountryCalculators countrySlug={article.country.slug} variant="sidebar" />
+              )}
             </div>
           </aside>
         </div>
