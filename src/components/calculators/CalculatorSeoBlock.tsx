@@ -3,25 +3,20 @@ import { faqJsonLd, calculatorJsonLd } from "@/lib/seo";
 export type CalcFaq = { question: string; answer: string };
 
 type Props = {
-  /** Назва калькулятора для JSON-LD WebApplication */
   name: string;
-  /** Опис для JSON-LD */
   description: string;
-  /** Шлях сторінки (для JSON-LD url) */
   path: string;
-  /** SEO-текст (абзаци) під калькулятором */
   intro: string[];
-  /** FAQ — і видимий акордеон, і JSON-LD FAQPage */
   faqs: CalcFaq[];
 };
 
 /**
- * SEO-блок під калькулятором: пояснювальний текст + FAQ-акордеон + structured data.
- * Дає Google контент для індексації й rich results (FAQ у видачі).
+ * SEO-блок під калькулятором: FAQ-акордеон (вище — те, що люди шукають)
+ * + пояснювальний текст (нижче — розгорнутий контекст) + structured data.
  */
 export function CalculatorSeoBlock({ name, description, path, intro, faqs }: Props) {
   return (
-    <section className="mt-16 border-t border-sand-300 pt-12">
+    <section className="mt-14 border-t border-sand-300 pt-12">
       {/* structured data */}
       <script
         type="application/ld+json"
@@ -36,20 +31,9 @@ export function CalculatorSeoBlock({ name, description, path, intro, faqs }: Pro
         />
       )}
 
-      {/* SEO-текст */}
-      {intro.length > 0 && (
-        <div className="prose-content max-w-3xl">
-          {intro.map((p, i) => (
-            <p key={i} className="mb-4 leading-relaxed text-slate-600">
-              {p}
-            </p>
-          ))}
-        </div>
-      )}
-
-      {/* FAQ-акордеон */}
+      {/* FAQ — одразу після калькулятора (швидкі відповіді) */}
       {faqs.length > 0 && (
-        <div className="mt-10 max-w-3xl">
+        <div className="max-w-3xl">
           <h2 className="mb-5 text-2xl font-bold text-ink">Часті запитання</h2>
           <div className="space-y-3">
             {faqs.map((f, i) => (
@@ -67,6 +51,17 @@ export function CalculatorSeoBlock({ name, description, path, intro, faqs }: Pro
               </details>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Пояснювальний текст — нижче (розгорнутий контекст) */}
+      {intro.length > 0 && (
+        <div className="prose-content mt-12 max-w-3xl">
+          {intro.map((p, i) => (
+            <p key={i} className="mb-4 leading-relaxed text-slate-600">
+              {p}
+            </p>
+          ))}
         </div>
       )}
     </section>
