@@ -4,7 +4,7 @@ import { createPublicSupabase } from "@/lib/supabase";
 import type { Place, PlaceWithRelations } from "@/types/db";
 
 const LIST_FIELDS =
-  "id, name, slug, description, category, country_id, city_id, address, phone, website, instagram, telegram, languages, is_ukrainian_owned, working_hours, is_featured, status";
+  "id, name, slug, description, category, country_id, city_id, address, phone, website, instagram, telegram, languages, is_ukrainian_owned, working_hours, is_featured, status, plan, cover_image, logo";
 
 const RELATIONS =
   "country:countries(id, name, slug, emoji), city:cities(id, name, slug)";

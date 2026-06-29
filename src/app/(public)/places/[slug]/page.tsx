@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getPlaceBySlug, getRelatedPlaces } from "@/server/queries/places";
@@ -104,15 +105,43 @@ export default async function PlacePage({
 
       <Breadcrumbs items={breadcrumbs} />
 
+      {/* Герой-обкладинка */}
+      {place.cover_image && (
+        <div className="container">
+          <div className="relative aspect-[21/9] w-full overflow-hidden rounded-3xl bg-sand-200 sm:aspect-[3/1]">
+            <Image
+              src={place.cover_image}
+              alt={place.name}
+              fill
+              priority
+              sizes="(max-width: 1200px) 100vw, 1200px"
+              className="object-cover"
+            />
+          </div>
+        </div>
+      )}
+
       <div className="container pb-16">
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           {/* Основне */}
           <div className="min-w-0">
-            <div className="flex items-start gap-4">
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald">
-                {Icon && <Icon size={26} />}
-              </span>
-              <div>
+            <div className={place.cover_image ? "-mt-10 flex items-end gap-4" : "flex items-start gap-4"}>
+              {place.logo ? (
+                <span className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-white bg-white shadow-sm">
+                  <Image
+                    src={place.logo}
+                    alt={`${place.name} лого`}
+                    width={80}
+                    height={80}
+                    className="h-full w-full object-cover"
+                  />
+                </span>
+              ) : (
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald">
+                  {Icon && <Icon size={26} />}
+                </span>
+              )}
+              <div className={place.cover_image ? "pb-1" : ""}>
                 <p className="font-mono text-xs uppercase tracking-widest text-emerald">{label}</p>
                 <h1 className="mt-1 font-display text-3xl font-bold text-ink">{place.name}</h1>
                 <p className="mt-1 text-sm text-slate-500">

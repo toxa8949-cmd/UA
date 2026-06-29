@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Search,
   X,
@@ -601,49 +602,87 @@ function PlaceCard({ place }: { place: PlaceWithRelations }) {
     <Link
       href={`/places/${place.slug}`}
       className={cn(
-        "group flex flex-col rounded-2xl bg-white p-5 transition-colors",
+        "group flex flex-col overflow-hidden rounded-2xl bg-white transition-colors",
         premium
           ? "border-2 border-emerald/40 hover:border-emerald"
           : "border border-sand-300 hover:border-emerald/40"
       )}
     >
-      <div className="flex items-start gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald">
-          {Icon && <Icon size={18} />}
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
+      {/* Обкладинка */}
+      <div className="relative aspect-[16/9] overflow-hidden bg-sand-200">
+        {place.cover_image ? (
+          <Image
+            src={place.cover_image}
+            alt={place.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-50 to-sand-200">
+            {Icon && <Icon size={40} className="text-emerald/30" strokeWidth={1.5} />}
+          </div>
+        )}
+
+        {/* Логотип поверх обкладинки */}
+        {place.logo && (
+          <span className="absolute bottom-0 left-4 translate-y-1/2 overflow-hidden rounded-xl border-2 border-white bg-white shadow-sm">
+            <Image
+              src={place.logo}
+              alt={`${place.name} лого`}
+              width={44}
+              height={44}
+              className="h-11 w-11 object-cover"
+            />
+          </span>
+        )}
+
+        {/* Бейдж featured/premium */}
+        {(premium || featured) && (
+          <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/95 px-2 py-0.5 text-xs font-medium text-gold-600 shadow-sm backdrop-blur">
+            <Star size={11} className="fill-gold-500 text-gold-500" />
+            {premium ? "Premium" : "Рекомендовано"}
+          </span>
+        )}
+      </div>
+
+      {/* Контент */}
+      <div className={cn("flex flex-1 flex-col p-5", place.logo && "pt-7")}>
+        <div className="flex items-start gap-3">
+          {!place.logo && (
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald">
+              {Icon && <Icon size={16} />}
+            </span>
+          )}
+          <div className="min-w-0 flex-1">
             <h3 className="font-display font-semibold leading-snug text-ink group-hover:text-emerald">
               {place.name}
             </h3>
-            {(premium || featured) && (
-              <Star size={14} className="mt-0.5 shrink-0 fill-gold-500 text-gold-500" />
-            )}
+            <p className="mt-0.5 text-xs text-slate-400">
+              {placeCategoryLabel(place.category)}
+              {place.city && ` · ${place.city.name}`}
+            </p>
           </div>
-          <p className="mt-0.5 text-xs text-slate-400">
-            {placeCategoryLabel(place.category)}
-            {place.city && ` · ${place.city.name}`}
-          </p>
         </div>
-      </div>
 
-      {place.description && (
-        <p className="mt-3 line-clamp-2 flex-1 text-sm leading-relaxed text-slate-600">
-          {place.description}
-        </p>
-      )}
+        {place.description && (
+          <p className="mt-3 line-clamp-2 flex-1 text-sm leading-relaxed text-slate-600">
+            {place.description}
+          </p>
+        )}
 
-      <div className="mt-3 flex flex-wrap gap-2">
-        {place.languages?.includes("uk") && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald">
-            Українською
-          </span>
-        )}
-        {place.city && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-sand-200/70 px-2 py-0.5 text-xs text-slate-500">
-            <MapPin size={11} /> {place.city.name}
-          </span>
-        )}
+        <div className="mt-3 flex flex-wrap gap-2">
+          {place.languages?.includes("uk") && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald">
+              Українською
+            </span>
+          )}
+          {place.city && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-sand-200/70 px-2 py-0.5 text-xs text-slate-500">
+              <MapPin size={11} /> {place.city.name}
+            </span>
+          )}
+        </div>
       </div>
     </Link>
   );
