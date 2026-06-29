@@ -43,8 +43,8 @@ export const CALCULATORS = [
   },
   {
     slug: "salary-netto-brutto",
-    title: "Зарплата netto/brutto",
-    description: "Приблизний розрахунок чистої зарплати після податків.",
+    title: "Зарплата netto/brutto (Польща)",
+    description: "Точний розрахунок netto з brutto на umowa o pracę: ZUS, zdrowotna, PIT. Актуально на 2026.",
   },
   {
     slug: "tax-jdg-poland",
