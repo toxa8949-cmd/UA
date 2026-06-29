@@ -61,6 +61,11 @@ export const CALCULATORS = [
     title: "Податки самозайнятого у Португалії",
     description: "Скільки на руки на recibos verdes: regime simplificado, IRS, SS. Актуально на 2026.",
   },
+  {
+    slug: "tax-autonomo-spain",
+    title: "Податки autónomo в Іспанії",
+    description: "Скільки на руки як autónomo: cuota за траншами, IRPF, tarifa plana. Актуально на 2026.",
+  },
 ] as const;
 
 export const MAIN_NAV = [
