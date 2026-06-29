@@ -51,6 +51,11 @@ export const CALCULATORS = [
     title: "Податки ФОП (JDG) у Польщі",
     description: "Скільки на руки на JDG: Ryczałt, Liniowy чи Skala. Актуально на 2026.",
   },
+  {
+    slug: "tax-osvc-czech",
+    title: "Податки ФОП (OSVČ) у Чехії",
+    description: "Скільки на руки на OSVČ: paušální daň чи витратні режими. Актуально на 2026.",
+  },
 ] as const;
 
 export const MAIN_NAV = [
