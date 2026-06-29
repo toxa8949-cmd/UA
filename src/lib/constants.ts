@@ -56,6 +56,11 @@ export const CALCULATORS = [
     title: "Податки ФОП (OSVČ) у Чехії",
     description: "Скільки на руки на OSVČ: paušální daň чи витратні режими. Актуально на 2026.",
   },
+  {
+    slug: "tax-independent-portugal",
+    title: "Податки самозайнятого у Португалії",
+    description: "Скільки на руки на recibos verdes: regime simplificado, IRS, SS. Актуально на 2026.",
+  },
 ] as const;
 
 export const MAIN_NAV = [
