@@ -225,6 +225,8 @@ export interface Database {
   public: {
     Tables: {
       countries: { Row: Country; Insert: Partial<Country>; Update: Partial<Country> };
+      cities: { Row: City; Insert: Partial<City>; Update: Partial<City> };
+      places: { Row: Place; Insert: Partial<Place>; Update: Partial<Place> };
       categories: { Row: Category; Insert: Partial<Category>; Update: Partial<Category> };
       articles: { Row: Article; Insert: Partial<Article>; Update: Partial<Article> };
       services: { Row: Service; Insert: Partial<Service>; Update: Partial<Service> };
