@@ -1,4 +1,5 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 import { createPublicSupabase } from "@/lib/supabase";
 import type { Place, PlaceWithRelations } from "@/types/db";
 
@@ -174,17 +175,25 @@ export type CountryFacet = { slug: string; name: string; emoji: string | null; c
 export type CategoryFacet = { category: string; count: number };
 export type CityFacet = { slug: string; name: string; count: number };
 
-/**
- * Фасети (лічильники) для опублікованих місць.
- * Рахуємо у застосунку по легкій вибірці (country_id, city_id, category)
- * — на десятки тисяч записів це один компактний запит без важких полів.
- */
-export async function getPlacesFacets(countrySlug?: string): Promise<{
+export type PlacesFacets = {
   countries: CountryFacet[];
   categories: CategoryFacet[];
   cities: CityFacet[];
   total: number;
-}> {
+};
+
+/**
+ * Фасети (лічильники) для опублікованих місць.
+ * Кешуються на 1 год — між кліками по сортуванню/пагінації вони ідентичні,
+ * тож не б'ємо в БД на кожен фільтр. Ключ кешу залежить від обраної країни.
+ */
+export const getPlacesFacets = unstable_cache(
+  _getPlacesFacets,
+  ["places-facets"],
+  { revalidate: 3600, tags: ["places"] }
+);
+
+async function _getPlacesFacets(countrySlug?: string): Promise<PlacesFacets> {
   const supabase = createPublicSupabase();
 
   // 1) легкий зріз для лічильників країн і категорій

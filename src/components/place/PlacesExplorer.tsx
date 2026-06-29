@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useRef, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -71,16 +71,46 @@ export function PlacesExplorer({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchValue, setSearchValue] = useState(active.q ?? "");
 
+  // Оптимістичне дзеркало активних фільтрів — підсвітка реагує миттєво,
+  // не чекаючи серверного round-trip. Синхронізується з props при відповіді.
+  const [optimistic, setOptimistic] = useState(active);
+  const lastServer = useRef(active);
+  if (lastServer.current !== active) {
+    lastServer.current = active;
+    if (
+      optimistic.country !== active.country ||
+      optimistic.category !== active.category ||
+      optimistic.city !== active.city ||
+      optimistic.uk !== active.uk ||
+      optimistic.owned !== active.owned ||
+      optimistic.sort !== active.sort ||
+      optimistic.q !== active.q
+    ) {
+      setOptimistic(active);
+    }
+  }
+  const view = optimistic;
+
   // Оновити один або кілька параметрів URL (скидаючи сторінку, окрім явного page)
   const update = useCallback(
     (patch: Record<string, string | null>) => {
-      const next = new URLSearchParams(params.toString());
+      // миттєво відобразити в підсвітці
+      setOptimistic((prev) => {
+        const next = { ...prev } as Record<string, unknown>;
+        for (const [k, v] of Object.entries(patch)) {
+          if (k === "uk" || k === "owned") next[k] = v === "1";
+          else next[k] = v ?? undefined;
+        }
+        return next as typeof prev;
+      });
+
+      const sp = new URLSearchParams(params.toString());
       for (const [key, value] of Object.entries(patch)) {
-        if (value === null || value === "") next.delete(key);
-        else next.set(key, value);
+        if (value === null || value === "") sp.delete(key);
+        else sp.set(key, value);
       }
-      if (!("page" in patch)) next.delete("page");
-      const qs = next.toString();
+      if (!("page" in patch)) sp.delete("page");
+      const qs = sp.toString();
       startTransition(() => {
         router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
       });
@@ -89,15 +119,16 @@ export function PlacesExplorer({
   );
 
   const hasFilters =
-    !!active.country ||
-    !!active.category ||
-    !!active.city ||
-    active.uk ||
-    active.owned ||
-    !!active.q;
+    !!view.country ||
+    !!view.category ||
+    !!view.city ||
+    view.uk ||
+    view.owned ||
+    !!view.q;
 
   const resetAll = () => {
     setSearchValue("");
+    setOptimistic({ sort: view.sort });
     startTransition(() => router.push(pathname, { scroll: false }));
   };
 
@@ -127,7 +158,7 @@ export function PlacesExplorer({
           <FacetRow
             label="Усі країни"
             count={facets.total}
-            active={!active.country}
+            active={!view.country}
             onClick={() => update({ country: null, city: null })}
           />
           {facets.countries.map((c) => (
@@ -135,9 +166,9 @@ export function PlacesExplorer({
               key={c.slug}
               label={`${c.emoji ? c.emoji + " " : ""}${c.name}`}
               count={c.count}
-              active={active.country === c.slug}
+              active={view.country === c.slug}
               onClick={() =>
-                update({ country: active.country === c.slug ? null : c.slug, city: null })
+                update({ country: view.country === c.slug ? null : c.slug, city: null })
               }
             />
           ))}
@@ -145,7 +176,7 @@ export function PlacesExplorer({
       </div>
 
       {/* Міста (лише коли обрано країну) */}
-      {active.country && facets.cities.length > 0 && (
+      {view.country && facets.cities.length > 0 && (
         <div>
           <p className="mb-3 font-mono text-xs uppercase tracking-widest text-slate-400">
             Місто
@@ -153,7 +184,7 @@ export function PlacesExplorer({
           <ul className="space-y-0.5">
             <FacetRow
               label="Усі міста"
-              active={!active.city}
+              active={!view.city}
               onClick={() => update({ city: null })}
             />
             {facets.cities.map((c) => (
@@ -161,9 +192,9 @@ export function PlacesExplorer({
                 key={c.slug}
                 label={c.name}
                 count={c.count}
-                active={active.city === c.slug}
+                active={view.city === c.slug}
                 onClick={() =>
-                  update({ city: active.city === c.slug ? null : c.slug })
+                  update({ city: view.city === c.slug ? null : c.slug })
                 }
               />
             ))}
@@ -180,7 +211,7 @@ export function PlacesExplorer({
           <div className="space-y-3">
             <FacetRow
               label="Усі категорії"
-              active={!active.category}
+              active={!view.category}
               onClick={() => update({ category: null })}
             />
             {categoryByGroup.map((group) => (
@@ -197,11 +228,11 @@ export function PlacesExplorer({
                         label={cat.label}
                         count={cat.count}
                         icon={Icon ? <Icon size={15} /> : undefined}
-                        active={active.category === cat.category}
+                        active={view.category === cat.category}
                         onClick={() =>
                           update({
                             category:
-                              active.category === cat.category ? null : cat.category,
+                              view.category === cat.category ? null : cat.category,
                           })
                         }
                       />
@@ -222,13 +253,13 @@ export function PlacesExplorer({
         <div className="space-y-2">
           <CheckRow
             label="Обслуговують українською"
-            checked={!!active.uk}
-            onClick={() => update({ uk: active.uk ? null : "1" })}
+            checked={!!view.uk}
+            onClick={() => update({ uk: view.uk ? null : "1" })}
           />
           <CheckRow
             label="Український власник"
-            checked={!!active.owned}
-            onClick={() => update({ owned: active.owned ? null : "1" })}
+            checked={!!view.owned}
+            onClick={() => update({ owned: view.owned ? null : "1" })}
           />
         </div>
       </div>
@@ -258,7 +289,6 @@ export function PlacesExplorer({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submitSearch()}
-            onBlur={submitSearch}
             placeholder="Знайти: бухгалтер, стоматолог, садочок, кафе…"
             className="w-full rounded-xl border border-sand-300 bg-white py-2.5 pl-10 pr-10 text-sm text-ink outline-none transition-colors focus:border-emerald"
           />
@@ -289,7 +319,7 @@ export function PlacesExplorer({
           <div className="relative">
             <select
               aria-label="Сортування"
-              value={active.sort}
+              value={view.sort}
               onChange={(e) => update({ sort: e.target.value })}
               className="appearance-none rounded-xl border border-sand-300 bg-white py-2.5 pl-3.5 pr-9 text-sm font-medium text-ink outline-none focus:border-emerald"
             >
@@ -310,24 +340,24 @@ export function PlacesExplorer({
       {/* Активні фільтри-чіпи */}
       {hasFilters && (
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          {active.country && (
+          {view.country && (
             <Chip
-              label={facets.countries.find((c) => c.slug === active.country)?.name ?? active.country}
+              label={facets.countries.find((c) => c.slug === view.country)?.name ?? view.country}
               onRemove={() => update({ country: null, city: null })}
             />
           )}
-          {active.city && (
+          {view.city && (
             <Chip
-              label={facets.cities.find((c) => c.slug === active.city)?.name ?? active.city}
+              label={facets.cities.find((c) => c.slug === view.city)?.name ?? view.city}
               onRemove={() => update({ city: null })}
             />
           )}
-          {active.category && (
-            <Chip label={placeCategoryLabel(active.category)} onRemove={() => update({ category: null })} />
+          {view.category && (
+            <Chip label={placeCategoryLabel(view.category)} onRemove={() => update({ category: null })} />
           )}
-          {active.uk && <Chip label="Українською" onRemove={() => update({ uk: null })} />}
-          {active.owned && <Chip label="Укр. власник" onRemove={() => update({ owned: null })} />}
-          {active.q && <Chip label={`«${active.q}»`} onRemove={() => { setSearchValue(""); update({ q: null }); }} />}
+          {view.uk && <Chip label="Українською" onRemove={() => update({ uk: null })} />}
+          {view.owned && <Chip label="Укр. власник" onRemove={() => update({ owned: null })} />}
+          {view.q && <Chip label={`«${view.q}»`} onRemove={() => { setSearchValue(""); update({ q: null }); }} />}
         </div>
       )}
 
