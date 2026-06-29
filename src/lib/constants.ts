@@ -66,6 +66,11 @@ export const CALCULATORS = [
     title: "Податки autónomo в Іспанії",
     description: "Скільки на руки як autónomo: cuota за траншами, IRPF, tarifa plana. Актуально на 2026.",
   },
+  {
+    slug: "tax-freelancer-germany",
+    title: "Податки самозайнятого в Німеччині",
+    description: "Скільки на руки: Einkommensteuer, Soli, Gewerbesteuer. Freiberufler чи Gewerbe. Актуально на 2026.",
+  },
 ] as const;
 
 export const MAIN_NAV = [
