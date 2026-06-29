@@ -125,3 +125,24 @@ export function faqJsonLd(faqs: { question: string; answer: string }[]) {
     })),
   };
 }
+
+// JSON-LD для калькулятора (WebApplication) — допомагає Google показувати rich results
+export function calculatorJsonLd(c: {
+  name: string;
+  description: string;
+  url: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: c.name,
+    description: c.description,
+    url: `${SITE.url}${c.url}`,
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "Web",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    inLanguage: "uk",
+    isAccessibleForFree: true,
+    publisher: { "@type": "Organization", name: SITE.name },
+  };
+}
