@@ -77,3 +77,45 @@ export async function getPlacesCount(): Promise<number> {
     .eq("status", "published");
   return count ?? 0;
 }
+
+/** Схожі місця: та сама категорія в тому самому місті/країні (для перелінковки). */
+export async function getRelatedPlaces(
+  place: { id: string; category: string; city_id: string | null; country_id: string | null },
+  limit = 3
+): Promise<PlaceWithRelations[]> {
+  const supabase = createPublicSupabase();
+  // спершу та сама категорія + місто
+  let query = supabase
+    .from("places")
+    .select(`${LIST_FIELDS}, ${RELATIONS}`)
+    .eq("status", "published")
+    .eq("category", place.category)
+    .neq("id", place.id)
+    .limit(limit);
+  if (place.city_id) query = query.eq("city_id", place.city_id);
+  else if (place.country_id) query = query.eq("country_id", place.country_id);
+
+  const { data } = await query;
+  let results = (data ?? []) as unknown as PlaceWithRelations[];
+
+  // якщо мало — доповнюємо тією ж категорією в країні
+  if (results.length < limit && place.country_id) {
+    const { data: more } = await supabase
+      .from("places")
+      .select(`${LIST_FIELDS}, ${RELATIONS}`)
+      .eq("status", "published")
+      .eq("category", place.category)
+      .eq("country_id", place.country_id)
+      .neq("id", place.id)
+      .limit(limit);
+    const extra = (more ?? []) as unknown as PlaceWithRelations[];
+    const seen = new Set(results.map((r) => r.id));
+    for (const e of extra) {
+      if (!seen.has(e.id) && results.length < limit) {
+        results.push(e);
+        seen.add(e.id);
+      }
+    }
+  }
+  return results;
+}

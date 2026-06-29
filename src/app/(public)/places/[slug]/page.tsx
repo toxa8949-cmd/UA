@@ -2,10 +2,22 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { getPlaceBySlug } from "@/server/queries/places";
-import { placeCategoryLabel, getPlaceCategory, LANGUAGE_LABELS } from "@/lib/places";
-import { buildMetadata } from "@/lib/seo";
-import { MapPin, Phone, Globe, Instagram, Send, Mail, Clock, Check } from "lucide-react";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getPlaceBySlug, getRelatedPlaces } from "@/server/queries/places";
+import {
+  placeCategoryLabel,
+  getPlaceCategory,
+  LANGUAGE_LABELS,
+  generatePlaceIntro,
+  generatePlaceFaqs,
+} from "@/lib/places";
+import {
+  buildMetadata,
+  localBusinessJsonLd,
+  breadcrumbJsonLd,
+  faqJsonLd,
+} from "@/lib/seo";
+import { MapPin, Phone, Globe, Instagram, Send, Mail, Clock, Check, ArrowUpRight } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -18,10 +30,17 @@ export async function generateMetadata({
   const place = await getPlaceBySlug(slug);
   if (!place) return buildMetadata({ title: "Не знайдено", noIndex: true });
 
-  const where = place.city?.name ? ` у місті ${place.city.name}` : "";
+  const label = placeCategoryLabel(place.category);
+  const where = place.city?.name ? ` у ${place.city.name}` : place.country?.name ? ` у ${place.country.name}` : "";
+  const title = place.seo_title ?? `${place.name} — ${label}${where} | Українцям поруч`;
+  const desc =
+    place.seo_description ??
+    place.description ??
+    `${place.name} — ${label.toLowerCase()}${where}. Обслуговування українською мовою. Контакти, адреса, графік роботи.`;
+
   return buildMetadata({
-    title: place.seo_title ?? `${place.name} — ${placeCategoryLabel(place.category)}${where}`,
-    description: place.seo_description ?? place.description ?? undefined,
+    title,
+    description: desc,
     path: `/places/${slug}`,
   });
 }
@@ -35,8 +54,23 @@ export default async function PlacePage({
   const place = await getPlaceBySlug(slug);
   if (!place) notFound();
 
+  const related = await getRelatedPlaces(place, 3);
+
   const cat = getPlaceCategory(place.category);
   const Icon = cat?.icon;
+  const label = placeCategoryLabel(place.category);
+
+  // контент: редакційний full_description АБО авто-генерований
+  const intro = place.full_description
+    ? place.full_description.split(/\n\n+/).filter(Boolean)
+    : generatePlaceIntro(place);
+  const faqs = generatePlaceFaqs(place);
+
+  const breadcrumbs = [
+    { name: "Головна", url: "/" },
+    { name: "Українцям поруч", url: "/places" },
+    { name: place.name, url: `/places/${slug}` },
+  ];
 
   const contacts: { icon: typeof Phone; label: string; href: string }[] = [];
   if (place.phone) contacts.push({ icon: Phone, label: place.phone, href: `tel:${place.phone}` });
@@ -49,28 +83,42 @@ export default async function PlacePage({
 
   return (
     <>
-      <Breadcrumbs items={[
-        { name: "Головна", url: "/" },
-        { name: "Українцям поруч", url: "/places" },
-        { name: place.name, url: `/places/${slug}` },
-      ]} />
+      <JsonLd
+        data={localBusinessJsonLd({
+          name: place.name,
+          description: place.description,
+          category: place.category,
+          address: place.address,
+          city: place.city?.name,
+          country: place.country?.name,
+          phone: place.phone,
+          website: place.website,
+          url: `/places/${slug}`,
+          latitude: place.latitude,
+          longitude: place.longitude,
+          languages: place.languages,
+        })}
+      />
+      <JsonLd data={breadcrumbJsonLd(breadcrumbs)} />
+      <JsonLd data={faqJsonLd(faqs)} />
+
+      <Breadcrumbs items={breadcrumbs} />
 
       <div className="container pb-16">
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           {/* Основне */}
-          <div>
+          <div className="min-w-0">
             <div className="flex items-start gap-4">
               <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald">
                 {Icon && <Icon size={26} />}
               </span>
               <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-emerald">
-                  {placeCategoryLabel(place.category)}
-                </p>
+                <p className="font-mono text-xs uppercase tracking-widest text-emerald">{label}</p>
                 <h1 className="mt-1 font-display text-3xl font-bold text-ink">{place.name}</h1>
                 <p className="mt-1 text-sm text-slate-500">
                   {place.city?.name}
-                  {place.country?.name && `, ${place.country.name}`}
+                  {place.city?.name && place.country?.name && ", "}
+                  {place.country?.name}
                 </p>
               </div>
             </div>
@@ -81,12 +129,16 @@ export default async function PlacePage({
               </span>
             )}
 
-            {place.description && (
-              <div className="prose-content mt-6 max-w-2xl">
-                <p className="leading-relaxed text-slate-600">{place.description}</p>
-              </div>
-            )}
+            {/* Контент */}
+            <div className="prose-content mt-6 max-w-2xl">
+              {intro.map((p, i) => (
+                <p key={i} className="mb-4 leading-relaxed text-slate-600">
+                  {p}
+                </p>
+              ))}
+            </div>
 
+            {/* Мови */}
             {place.languages && place.languages.length > 0 && (
               <div className="mt-8">
                 <h2 className="text-sm font-semibold text-ink">Мови обслуговування</h2>
@@ -99,9 +151,28 @@ export default async function PlacePage({
                 </div>
               </div>
             )}
+
+            {/* FAQ */}
+            <div className="mt-10 max-w-2xl">
+              <h2 className="mb-4 font-display text-2xl font-bold text-ink">Часті запитання</h2>
+              <div className="space-y-3">
+                {faqs.map((f, i) => (
+                  <details
+                    key={i}
+                    className="group rounded-xl border border-sand-300 bg-white p-4 [&_summary::-webkit-details-marker]:hidden"
+                  >
+                    <summary className="flex cursor-pointer items-center justify-between gap-3 font-medium text-ink">
+                      {f.question}
+                      <span className="text-slate-400 transition-transform group-open:rotate-180">⌄</span>
+                    </summary>
+                    <p className="mt-3 leading-relaxed text-slate-600">{f.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
           </div>
 
-          {/* Бічна панель: контакти */}
+          {/* Бічна панель */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-2xl border border-sand-300 bg-white p-5">
               <h2 className="font-display font-semibold text-ink">Контакти</h2>
@@ -133,16 +204,54 @@ export default async function PlacePage({
               </div>
             </div>
 
-            {place.city && (
-              <Link
-                href="/places"
-                className="mt-4 block rounded-2xl border border-sand-300 bg-sand-100/60 p-4 text-center text-sm font-medium text-emerald transition-colors hover:bg-sand-200"
-              >
-                ← Усі українські послуги
-              </Link>
-            )}
+            <Link
+              href="/places"
+              className="mt-4 block rounded-2xl border border-sand-300 bg-sand-100/60 p-4 text-center text-sm font-medium text-emerald transition-colors hover:bg-sand-200"
+            >
+              ← Усі українські послуги
+            </Link>
           </aside>
         </div>
+
+        {/* Схожі поруч */}
+        {related.length > 0 && (
+          <section className="mt-16 border-t border-sand-300 pt-12">
+            <h2 className="mb-5 font-display text-2xl font-bold text-ink">
+              Схожі {label.toLowerCase()}{place.city?.name ? ` у ${place.city.name}` : ""}
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((r) => {
+                const RIcon = getPlaceCategory(r.category)?.icon;
+                return (
+                  <Link
+                    key={r.id}
+                    href={`/places/${r.slug}`}
+                    className="group flex flex-col rounded-2xl border border-sand-300 bg-white p-5 transition-colors hover:border-emerald/40"
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald">
+                        {RIcon && <RIcon size={18} />}
+                      </span>
+                      <div className="min-w-0">
+                        <span className="block font-display font-semibold leading-snug text-ink group-hover:text-emerald">
+                          {r.name}
+                        </span>
+                        <span className="mt-0.5 block text-xs text-slate-400">
+                          {placeCategoryLabel(r.category)}
+                          {r.city?.name && ` · ${r.city.name}`}
+                        </span>
+                      </div>
+                      <ArrowUpRight size={15} className="ml-auto shrink-0 text-slate-300 group-hover:text-emerald" />
+                    </div>
+                    {r.description && (
+                      <p className="mt-3 line-clamp-2 text-sm text-slate-600">{r.description}</p>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
       </div>
     </>
   );

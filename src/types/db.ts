@@ -188,6 +188,7 @@ export interface Place {
   name: string;
   slug: string;
   description: string | null;
+  full_description: string | null;
   category: string;
   country_id: string | null;
   city_id: string | null;

@@ -146,3 +146,51 @@ export function calculatorJsonLd(c: {
     publisher: { "@type": "Organization", name: SITE.name },
   };
 }
+
+// JSON-LD для локального бізнесу (LocalBusiness) — для rich results у локальному пошуку
+export function localBusinessJsonLd(p: {
+  name: string;
+  description?: string | null;
+  category?: string;
+  address?: string | null;
+  city?: string | null;
+  country?: string | null;
+  phone?: string | null;
+  website?: string | null;
+  url: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  languages?: string[];
+}) {
+  const data: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: p.name,
+    url: `${SITE.url}${p.url}`,
+  };
+  if (p.description) data.description = p.description;
+  if (p.phone) data.telephone = p.phone;
+  if (p.website) data.sameAs = [p.website];
+  if (p.address || p.city || p.country) {
+    data.address = {
+      "@type": "PostalAddress",
+      ...(p.address ? { streetAddress: p.address } : {}),
+      ...(p.city ? { addressLocality: p.city } : {}),
+      ...(p.country ? { addressCountry: p.country } : {}),
+    };
+  }
+  if (p.latitude != null && p.longitude != null) {
+    data.geo = {
+      "@type": "GeoCoordinates",
+      latitude: p.latitude,
+      longitude: p.longitude,
+    };
+  }
+  if (p.languages && p.languages.length > 0) {
+    data.availableLanguage = p.languages.map((l) => ({
+      "@type": "Language",
+      name: l,
+    }));
+  }
+  return data;
+}
