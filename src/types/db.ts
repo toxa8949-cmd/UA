@@ -183,6 +183,41 @@ export interface DealWithRelations extends Deal {
   country: Country | null;
 }
 
+export interface Place {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  category: string;
+  country_id: string | null;
+  city_id: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  phone: string | null;
+  website: string | null;
+  instagram: string | null;
+  telegram: string | null;
+  email: string | null;
+  languages: string[];
+  is_ukrainian_owned: boolean;
+  working_hours: string | null;
+  logo: string | null;
+  cover_image: string | null;
+  status: "pending" | "published" | "rejected" | "archived";
+  plan: "free" | "featured" | "premium";
+  is_featured: boolean;
+  seo_title: string | null;
+  seo_description: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PlaceWithRelations extends Place {
+  country: Country | null;
+  city: City | null;
+}
+
 // ─── Supabase Database schema (для типізації клієнта) ────────
 
 export interface Database {

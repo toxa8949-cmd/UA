@@ -123,6 +123,7 @@ export const MAIN_NAV = [
   { href: "/articles", label: "Статті" },
   { href: "/news", label: "Новини" },
   { href: "/calculators", label: "Калькулятори" },
+  { href: "/places", label: "Українцям поруч" },
   { href: "/services", label: "Сервіси" },
 ] as const;
 
