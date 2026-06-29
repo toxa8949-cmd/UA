@@ -25,7 +25,7 @@ import { RELATED_COUNTRIES } from "@/lib/constants";
 import { CountryCalculators } from "@/components/countries/CountryCalculators";
 import { estimateCost } from "@/lib/costModel";
 import { formatMoney } from "@/lib/format";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ArrowRight } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -245,18 +245,35 @@ export default async function CountryPage({
 
       {/* Міста */}
       {cities.length > 0 && (
-        <Section eyebrow="Міста" title={`Міста країни ${country.name}`}>
+        <Section
+          eyebrow="Міста"
+          title={`Де жити в країні ${country.name}`}
+          subtitle="Оберіть місто — і дізнайтеся про оренду, зарплати та життя в ньому детально."
+          action={
+            <Link href="/cities" className="flex items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">
+              Усі міста <ArrowRight size={15} />
+            </Link>
+          }
+        >
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {cities.map((city) => (
               <Link key={city.id} href={`/cities/${city.slug}`}
-                className="group rounded-2xl border border-sand-300 bg-white p-4 transition-colors hover:border-emerald/40">
+                className="group flex flex-col rounded-2xl border border-sand-300 bg-white p-4 transition-colors hover:border-emerald/40">
                 <div className="flex items-center justify-between">
                   <span className="font-display font-semibold text-ink">{city.name}</span>
                   <ArrowUpRight size={15} className="text-emerald transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </div>
-                {city.average_rent != null && country.currency && (
-                  <p className="mt-1 text-xs text-slate-500">Оренда від {formatMoney(city.average_rent, country.currency)}</p>
-                )}
+                <div className="mt-2 space-y-0.5">
+                  {city.average_rent != null && country.currency && (
+                    <p className="text-xs text-slate-500">
+                      Оренда від{" "}
+                      <span className="font-mono font-medium text-ink">{formatMoney(city.average_rent, country.currency)}</span>
+                    </p>
+                  )}
+                  {city.population && (
+                    <p className="text-xs text-slate-400">{city.population}</p>
+                  )}
+                </div>
               </Link>
             ))}
           </div>
