@@ -203,6 +203,13 @@ export default async function CountryPage({
         </div>
       )}
 
+      {/* Калькулятори країни — одразу після гайдів (логічно: дізнався → порахуй) */}
+      <Section eyebrow="Калькулятори" title={`Калькулятори для країни ${country.name}`}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <CountryCalculators countrySlug={country.slug} variant="bare" />
+        </div>
+      </Section>
+
       {/* Services for country */}
       {services.length > 0 && (
         <div id="services" className="scroll-mt-32">
@@ -238,7 +245,7 @@ export default async function CountryPage({
 
       {/* Міста */}
       {cities.length > 0 && (
-        <Section eyebrow="Міста" title={`Міста країни ${country.name}`} className="bg-sand-200/50">
+        <Section eyebrow="Міста" title={`Міста країни ${country.name}`}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {cities.map((city) => (
               <Link key={city.id} href={`/cities/${city.slug}`}
@@ -256,16 +263,9 @@ export default async function CountryPage({
         </Section>
       )}
 
-      {/* Калькулятори країни */}
-      <Section eyebrow="Калькулятори" title={`Калькулятори для країни ${country.name}`}>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <CountryCalculators countrySlug={country.slug} variant="bare" />
-        </div>
-      </Section>
-
       {/* Схожі країни */}
       {relatedCountries.length > 0 && (
-        <Section eyebrow="Куди ще" title="Схожі країни">
+        <Section eyebrow="Куди ще" title="Схожі країни" className="bg-sand-200/50">
           <RelatedCountries countries={relatedCountries} />
         </Section>
       )}

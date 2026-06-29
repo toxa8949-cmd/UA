@@ -6,6 +6,7 @@ import { Section } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { FaqAccordion } from "@/components/country/FaqAccordion";
 import { CountryGuideTabs, type GuideSection } from "@/components/country/CountryGuideTabs";
+import { CountryCalculators } from "@/components/countries/CountryCalculators";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getCityBySlug, getCitySlugs, getCitiesForCountry } from "@/server/queries/cities";
 import { renderMarkdown } from "@/lib/markdown";
@@ -162,9 +163,18 @@ export default async function CityPage({
         </Section>
       )}
 
+      {/* Калькулятори країни */}
+      {city.country && (
+        <Section eyebrow="Калькулятори" title={`Калькулятори для країни ${city.country.name}`}>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <CountryCalculators countrySlug={city.country.slug} variant="bare" />
+          </div>
+        </Section>
+      )}
+
       {/* Інші міста країни */}
       {otherCities.length > 0 && city.country && (
-        <Section eyebrow="Поряд" title={`Інші міста країни ${city.country.name}`}>
+        <Section eyebrow="Поряд" title={`Інші міста країни ${city.country.name}`} className="bg-sand-200/50">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {otherCities.map((c) => (
               <Link
