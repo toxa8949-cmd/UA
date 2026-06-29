@@ -94,7 +94,10 @@ export function calcPL(
   // ── RYCZAŁT ── податок від обороту, витрати не враховуються
   const ryczaltZdrowotna = ryczaltZdrowotnaYear(grossYear);
   const ryczaltTax = grossYear * ryczaltRate;
-  const ryczaltNet = grossYear - zusYear - ryczaltZdrowotna - ryczaltTax;
+  // На руки = оборот - ПОДАТОК від обороту - ZUS - zdrowotna - РЕАЛЬНІ витрати.
+  // Витрати не зменшують податок на ryczałt, але людина їх реально платить,
+  // тож для чесного порівняння «на руки» їх віднімаємо.
+  const ryczaltNet = grossYear - expensesYear - zusYear - ryczaltZdrowotna - ryczaltTax;
 
   // ── LINIOWY 19% ── база = дохід - витрати - соц.ZUS
   const liniowyBase = Math.max(0, grossYear - expensesYear - zusYear);

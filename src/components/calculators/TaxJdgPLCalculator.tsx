@@ -16,8 +16,8 @@ function fmt(n: number): string {
 }
 
 const FORM_HINTS: Record<TaxResult["form"], string> = {
-  ryczalt: "Податок від обороту. Витрати не враховуються.",
-  liniowy: "Фіксовані 19%. Можна віднімати витрати.",
+  ryczalt: "Податок від обороту — витрати не зменшують податок. Але «на руки» показано вже після ваших реальних витрат.",
+  liniowy: "Фіксовані 19%. Витрати зменшують і податок, і суму на руки.",
   skala: "12% до 120 000 zł/рік, 32% вище. Є kwota wolna 30 000 zł.",
 };
 
@@ -122,7 +122,8 @@ export function TaxJdgPLCalculator() {
             className="w-full rounded-lg border border-sand-300 px-3 py-2.5 text-ink outline-none focus:border-emerald"
           />
           <p className="mt-1.5 text-xs text-slate-400">
-            Ryczałt рахується від обороту — витрати на нього не впливають.
+            На ryczałt витрати не зменшують податок, але «на руки» рахується вже після них —
+            щоб порівняння форм було чесним.
           </p>
         </div>
       </div>
