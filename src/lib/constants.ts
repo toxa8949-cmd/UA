@@ -57,6 +57,11 @@ export const CALCULATORS = [
     description: "Розрахунок Netto з Brutto: Lohnsteuer, Soli, соцвнески, Steuerklasse. Актуально на 2026.",
   },
   {
+    slug: "salary-netto-spain",
+    title: "Зарплата netto/bruto (Іспанія)",
+    description: "Розрахунок salario neto з bruto: Seguridad Social, IRPF, 12/14 виплат. Актуально на 2026.",
+  },
+  {
     slug: "tax-jdg-poland",
     title: "Податки ФОП (JDG) у Польщі",
     description: "Скільки на руки на JDG: Ryczałt, Liniowy чи Skala. Актуально на 2026.",
