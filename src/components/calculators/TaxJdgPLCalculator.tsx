@@ -9,7 +9,7 @@ import {
   type ZusType,
   type TaxResult,
 } from "@/lib/taxPL";
-import { ArrowUpRight, TrendingUp } from "lucide-react";
+import { ArrowUpRight, TrendingUp, Info } from "lucide-react";
 
 function fmt(n: number): string {
   return n.toLocaleString("pl-PL").replace(/,/g, " ") + " zł";
@@ -31,6 +31,10 @@ export function TaxJdgPLCalculator() {
     () => calcPL(income, ryczaltRate, zusType, expenses),
     [income, ryczaltRate, zusType, expenses]
   );
+
+  // Поріг VAT: чи перевищує річний оборот
+  const annualTurnover = income * 12;
+  const overVat = annualTurnover > PL_TAX_2026.vatThreshold;
 
   // найвигідніша форма (максимум на руки)
   const best = useMemo(
@@ -172,6 +176,25 @@ export function TaxJdgPLCalculator() {
             );
           })}
         </div>
+
+        {/* Попередження про VAT */}
+        {overVat && (
+          <div className="flex items-start gap-3 rounded-2xl border border-gold-500/40 bg-gold-50/60 p-4">
+            <Info size={18} className="mt-0.5 shrink-0 text-gold-500" />
+            <div className="text-sm leading-relaxed text-ink">
+              <p className="font-medium">
+                При обороті понад {fmt(PL_TAX_2026.vatThreshold)}/рік потрібна реєстрація платником VAT
+              </p>
+              <p className="mt-1 text-slate-600">
+                VAT <strong>не зменшує ваш дохід</strong> — ви додаєте його до ціни в інвойсі й
+                перераховуєте державі (за вирахуванням VAT зі своїх витрат). Але з'являється
+                обов'язок вести облік і подавати декларації JPK_V7. Деякі види діяльності
+                (консалтинг, юридичні послуги тощо) реєструються платником VAT з першої злотої.
+                Уточніть у бухгалтера.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Лід-форма */}
         <div className="rounded-2xl border border-emerald/30 bg-emerald-50/60 p-5">
