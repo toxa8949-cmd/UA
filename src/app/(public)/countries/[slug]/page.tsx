@@ -20,6 +20,8 @@ import {
 import { getArticles } from "@/server/queries/articles";
 import { getServicesForCountry } from "@/server/queries/services";
 import { getCitiesForCountry } from "@/server/queries/cities";
+import { getPlacesForCountry } from "@/server/queries/places";
+import { PlacesBlock } from "@/components/place/PlacesBlock";
 import { buildMetadata, faqJsonLd } from "@/lib/seo";
 import { RELATED_COUNTRIES } from "@/lib/constants";
 import { CountryCalculators } from "@/components/countries/CountryCalculators";
@@ -69,11 +71,12 @@ export default async function CountryPage({
   const country = await getCountryBySlug(slug);
   if (!country) notFound();
 
-  const [articles, services, allCountries, cities] = await Promise.all([
+  const [articles, services, allCountries, cities, places] = await Promise.all([
     getArticles({ countryId: country.id, limit: 6 }),
     getServicesForCountry(country.id, 6),
     getCountries(),
     getCitiesForCountry(country.id, 8),
+    getPlacesForCountry(country.id, 6),
   ]);
 
   // Схожі країни (перелінковка)
@@ -209,6 +212,13 @@ export default async function CountryPage({
           <CountryCalculators countrySlug={country.slug} variant="bare" />
         </div>
       </Section>
+
+      {/* Українські заклади в країні */}
+      <PlacesBlock
+        places={places}
+        title={`Українські послуги в країні ${country.name}`}
+        subtitle="Перевірені бізнеси, де говорять українською: бухгалтери, лікарі, садочки, кафе та інше."
+      />
 
       {/* Services for country */}
       {services.length > 0 && (

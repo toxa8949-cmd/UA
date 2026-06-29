@@ -7,8 +7,10 @@ import { Card } from "@/components/ui/Card";
 import { FaqAccordion } from "@/components/country/FaqAccordion";
 import { CountryGuideTabs, type GuideSection } from "@/components/country/CountryGuideTabs";
 import { CountryCalculators } from "@/components/countries/CountryCalculators";
+import { PlacesBlock } from "@/components/place/PlacesBlock";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getCityBySlug, getCitySlugs, getCitiesForCountry } from "@/server/queries/cities";
+import { getPlacesForCity, getPlacesForCountry } from "@/server/queries/places";
 import { renderMarkdown } from "@/lib/markdown";
 import { buildMetadata, faqJsonLd } from "@/lib/seo";
 import { formatMoney } from "@/lib/format";
@@ -60,6 +62,16 @@ export default async function CityPage({
   const otherCities = city.country
     ? (await getCitiesForCountry(city.country_id, 12)).filter((c) => c.slug !== city.slug)
     : [];
+
+  // Українські заклади: спершу в цьому місті, інакше — по країні
+  const cityPlaces = await getPlacesForCity(city.id, 6);
+  const places =
+    cityPlaces.length > 0
+      ? cityPlaces
+      : city.country
+      ? await getPlacesForCountry(city.country_id, 6)
+      : [];
+  const placesInCity = cityPlaces.length > 0;
 
   const stats = [
     city.average_salary != null ? { label: "Середня зарплата", value: formatMoney(city.average_salary, currency) } : null,
@@ -171,6 +183,21 @@ export default async function CityPage({
           </div>
         </Section>
       )}
+
+      {/* Українські заклади */}
+      <PlacesBlock
+        places={places}
+        title={
+          placesInCity
+            ? `Українські послуги у місті ${city.name}`
+            : `Українські послуги${city.country ? ` в країні ${city.country.name}` : ""}`
+        }
+        subtitle={
+          placesInCity
+            ? "Перевірені бізнеси, де говорять українською: бухгалтери, лікарі, садочки, кафе та інше."
+            : "Заклади поруч, де вас зрозуміють рідною мовою."
+        }
+      />
 
       {/* Інші міста країни */}
       {otherCities.length > 0 && city.country && (
