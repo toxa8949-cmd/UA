@@ -8,6 +8,7 @@ import {
   type CzResult,
 } from "@/lib/taxCZ";
 import { ArrowUpRight, TrendingUp, Info } from "lucide-react";
+import { TermHint } from "./TermHint";
 
 function fmt(n: number): string {
   return n.toLocaleString("cs-CZ").replace(/\u00a0/g, " ") + " Kč";
@@ -66,7 +67,7 @@ export function TaxOsvcCZCalculator() {
 
         <div>
           <label className="mb-2 block text-sm font-medium text-ink">
-            Паушальні витрати (за видом діяльності)
+            <TermHint label="Паушальні витрати" hint="Výdajový paušál — списання % доходу як витрат без чеків, для зменшення податку. Чим вищий %, тим менший податок." /> (за видом діяльності)
           </label>
           <select
             value={expenseRate}
@@ -127,21 +128,21 @@ export function TaxOsvcCZCalculator() {
                 <dl className="mt-4 space-y-1.5 border-t border-sand-300 pt-3 text-xs">
                   {r.form === "pausal_dan" ? (
                     <div className="flex justify-between">
-                      <dt className="text-slate-500">Платіж (усе разом)</dt>
+                      <dt className="text-slate-500"><TermHint label="Платіж (усе разом)" hint="Paušální daň — єдиний фіксований платіж за місяць, що включає податок, соціальне й медичне страхування разом." /></dt>
                       <dd className="text-ink">−{fmt(Math.round(r.taxYear / 12))}</dd>
                     </div>
                   ) : (
                     <>
                       <div className="flex justify-between">
-                        <dt className="text-slate-500">Sociální</dt>
+                        <dt className="text-slate-500"><TermHint label="Sociální" hint="Sociální pojištění — соціальне страхування (пенсійне + на хворобу). Рахується від частки прибутку, є мінімальний внесок." /></dt>
                         <dd className="text-ink">−{fmt(Math.round(r.socialYear / 12))}</dd>
                       </div>
                       <div className="flex justify-between">
-                        <dt className="text-slate-500">Zdravotní</dt>
+                        <dt className="text-slate-500"><TermHint label="Zdravotní" hint="Zdravotní pojištění — медичне страхування. Рахується від частки прибутку, є мінімальний внесок." /></dt>
                         <dd className="text-ink">−{fmt(Math.round(r.healthYear / 12))}</dd>
                       </div>
                       <div className="flex justify-between">
-                        <dt className="text-slate-500">Daň z příjmů</dt>
+                        <dt className="text-slate-500"><TermHint label="Daň z příjmů" hint="Daň z příjmů — прибутковий податок. 15% (23% на високі доходи), зменшується на sleva na poplatníka." /></dt>
                         <dd className="text-ink">−{fmt(Math.round(r.taxYear / 12))}</dd>
                       </div>
                     </>

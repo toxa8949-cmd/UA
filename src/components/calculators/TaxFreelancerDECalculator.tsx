@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { calcDE, DE_TAX_2026 } from "@/lib/taxDE";
 import { ArrowUpRight, Info } from "lucide-react";
+import { TermHint } from "./TermHint";
 
 function fmt(n: number): string {
   return "€" + Math.round(n).toLocaleString("en-US").replace(/,/g, "\u00a0");
@@ -81,7 +82,7 @@ export function TaxFreelancerDECalculator() {
         </div>
 
         <div>
-          <span className="mb-2 block text-sm font-medium text-ink">Тип діяльності</span>
+          <span className="mb-2 block text-sm font-medium text-ink"><TermHint label="Тип діяльності" hint="Freiberufler (вільні професії: IT-консалтинг, дизайн) не платять Gewerbesteuer. Gewerbe (торгівля, бізнес) — платять." /></span>
           <div className="space-y-2">
             <label
               className={`flex cursor-pointer items-start gap-2.5 rounded-lg border p-2.5 ${
@@ -153,22 +154,22 @@ export function TaxFreelancerDECalculator() {
               <dd className="text-ink">{fmt(result.grossYear)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Соц. страхування</dt>
+              <dt className="text-slate-500"><TermHint label="Соц. страхування" hint="Krankenversicherung + Pflegeversicherung — медичне страхування та страхування догляду. У Німеччині індивідуальне (державне GKV або приватне PKV)." /></dt>
               <dd className="text-ink">−{fmt(result.socialYear)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Einkommensteuer</dt>
+              <dt className="text-slate-500"><TermHint label="Einkommensteuer" hint="Einkommensteuer — прибутковий податок. Рахується за прогресивною формулою §32a EStG." /></dt>
               <dd className="text-ink">−{fmt(result.estYear)}</dd>
             </div>
             {result.soliYear > 0 && (
               <div className="flex justify-between">
-                <dt className="text-slate-500">Solidaritätszuschlag</dt>
+                <dt className="text-slate-500"><TermHint label="Solidaritätszuschlag" hint="Solidaritätszuschlag (Soli) — додатковий збір 5.5% від податку. Більшість із низьким/середнім доходом його не платять." /></dt>
                 <dd className="text-ink">−{fmt(result.soliYear)}</dd>
               </div>
             )}
             {isGewerbe && result.gewStYear > 0 && (
               <div className="flex justify-between">
-                <dt className="text-slate-500">Gewerbesteuer (після §35)</dt>
+                <dt className="text-slate-500"><TermHint label="Gewerbesteuer (після §35)" hint="Gewerbesteuer — промисловий податок (тільки для Gewerbe). Частково зараховується в Einkommensteuer за §35 EStG." /></dt>
                 <dd className="text-ink">−{fmt(result.gewStYear)}</dd>
               </div>
             )}

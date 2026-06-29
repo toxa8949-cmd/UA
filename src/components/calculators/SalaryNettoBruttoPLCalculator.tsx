@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { calcSalaryPL, calcZleceniePL, SALARY_PL_2026 } from "@/lib/salaryPL";
 import { ArrowUpRight, Info } from "lucide-react";
+import { TermHint } from "./TermHint";
 
 function fmt(n: number): string {
   return Math.round(n).toLocaleString("en-US").replace(/,/g, "\u00a0") + " zł";
@@ -212,15 +213,15 @@ export function SalaryNettoBruttoPLCalculator() {
               <dd className="text-ink">{fmt(r.bruttoMonth)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">ZUS {isZlec ? "zleceniobiorcy" : "працівника"}</dt>
+              <dt className="text-slate-500"><TermHint label={isZlec ? "ZUS zleceniobiorcy" : "ZUS працівника"} hint="Соціальні внески працівника: пенсійні, рентові, на хворобу. Решту платить роботодавець окремо." /></dt>
               <dd className="text-ink">−{fmt(r.zusYear / 12)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Składka zdrowotna</dt>
+              <dt className="text-slate-500"><TermHint label="Składka zdrowotna" hint="Медичний внесок 9% від доходу після соцвнесків. Не віднімається від PIT." /></dt>
               <dd className="text-ink">−{fmt(r.zdrowotnaYear / 12)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">PIT</dt>
+              <dt className="text-slate-500"><TermHint label="PIT" hint="Польський прибутковий податок: 12% до 120 000 zł/рік, 32% вище. Зменшується на kwota wolna." /></dt>
               <dd className="text-ink">−{fmt(r.pitYear / 12)}</dd>
             </div>
           </dl>

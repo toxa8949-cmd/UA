@@ -10,6 +10,7 @@ import {
   type TaxResult,
 } from "@/lib/taxPL";
 import { ArrowUpRight, TrendingUp, Info } from "lucide-react";
+import { TermHint } from "./TermHint";
 
 function fmt(n: number): string {
   return n.toLocaleString("pl-PL").replace(/,/g, " ") + " zł";
@@ -71,7 +72,7 @@ export function TaxJdgPLCalculator() {
 
         <div>
           <label className="mb-2 block text-sm font-medium text-ink">
-            Ставка ryczałt (за видом діяльності)
+            Ставка <TermHint label="ryczałt" hint="Ryczałt — спрощений податок від обороту (доходу). Витрати не віднімаються. Ставка залежить від виду діяльності." /> (за видом діяльності)
           </label>
           <select
             value={ryczaltRate}
@@ -157,11 +158,11 @@ export function TaxJdgPLCalculator() {
 
                 <dl className="mt-4 space-y-1.5 border-t border-sand-300 pt-3 text-xs">
                   <div className="flex justify-between">
-                    <dt className="text-slate-500">ZUS</dt>
+                    <dt className="text-slate-500"><TermHint label="ZUS" hint="Соціальні внески підприємця: пенсійні, на втрату працездатності, на хворобу. Сплачуються щомісяця незалежно від доходу." /></dt>
                     <dd className="text-ink">−{fmt(Math.round(r.zusYear / 12))}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-slate-500">Zdrowotna</dt>
+                    <dt className="text-slate-500"><TermHint label="Zdrowotna" hint="Складка zdrowotna — медичний внесок. У ryczałt це фіксована сума за порогом доходу; не віднімається від податку." /></dt>
                     <dd className="text-ink">−{fmt(Math.round(r.zdrowotnaYear / 12))}</dd>
                   </div>
                   <div className="flex justify-between">

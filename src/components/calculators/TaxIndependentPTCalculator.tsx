@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { calcPT, PT_COEFFICIENTS, PT_TAX_2026 } from "@/lib/taxPT";
 import { ArrowUpRight, Info } from "lucide-react";
+import { TermHint } from "./TermHint";
 
 function fmt(n: number): string {
   return "€" + Math.round(n).toLocaleString("en-US").replace(/,/g, "\u00a0");
@@ -61,7 +62,7 @@ export function TaxIndependentPTCalculator() {
 
         <div>
           <label className="mb-2 block text-sm font-medium text-ink">
-            Коефіцієнт (за видом діяльності)
+            <TermHint label="Коефіцієнт" hint="Regime simplificado: оподатковується не весь дохід, а його частина — дохід × коефіцієнт. Для IT зазвичай 0.75." /> (за видом діяльності)
           </label>
           <select
             value={coefficient}

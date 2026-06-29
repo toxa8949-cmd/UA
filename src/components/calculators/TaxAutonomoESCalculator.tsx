@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { calcES, ES_TAX_2026 } from "@/lib/taxES";
 import { ArrowUpRight, Info } from "lucide-react";
+import { TermHint } from "./TermHint";
 
 function fmt(n: number): string {
   return "€" + Math.round(n).toLocaleString("en-US").replace(/,/g, "\u00a0");
@@ -95,7 +96,7 @@ export function TaxAutonomoESCalculator() {
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div className="rounded-xl bg-white p-4">
-              <p className="text-xs text-slate-500">Cuota autónomos</p>
+              <p className="text-xs text-slate-500"><TermHint label="Cuota autónomos" hint="Обов'язковий соцвнесок самозайнятого в Іспанії. Рахується за траншами реального доходу (rendimiento neto)." /></p>
               <p className="mt-1 font-display text-lg font-bold text-ink">
                 {fmtCents(result.cuotaMonth)}<span className="text-xs font-normal text-slate-400"> /міс</span>
               </p>
@@ -112,11 +113,11 @@ export function TaxAutonomoESCalculator() {
               <dd className="text-ink">{fmt(result.grossYear)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Cuota autónomos / рік</dt>
+              <dt className="text-slate-500"><TermHint label="Cuota autónomos / рік" hint="Cuota de autónomos — обов'язковий соцвнесок самозайнятого. Рахується за траншами реального доходу." /></dt>
               <dd className="text-ink">−{fmt(result.cuotaYear)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">IRPF</dt>
+              <dt className="text-slate-500"><TermHint label="IRPF" hint="IRPF — прибутковий податок (impuesto sobre la renta). Прогресивний, за траншами доходу." /></dt>
               <dd className="text-ink">−{fmt(result.irpfYear)}</dd>
             </div>
           </dl>

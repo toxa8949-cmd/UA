@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { calcSalaryCZ, SALARY_CZ_2026 } from "@/lib/salaryCZ";
 import { ArrowUpRight } from "lucide-react";
+import { TermHint } from "./TermHint";
 
 function fmt(n: number): string {
   return Math.round(n).toLocaleString("en-US").replace(/,/g, "\u00a0") + " Kč";
@@ -99,11 +100,11 @@ export function SalaryNettoBruttoCZCalculator() {
               <dd className="text-ink">{fmt(result.bruttoMonth)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Sociální (7,1%)</dt>
+              <dt className="text-slate-500"><TermHint label="Sociální (7,1%)" hint="Sociální pojištění працівника (7,1%) — пенсійне та на хворобу. Решту (24,8%) платить роботодавець окремо." /></dt>
               <dd className="text-ink">−{fmt(result.socialMonth)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Zdravotní (4,5%)</dt>
+              <dt className="text-slate-500"><TermHint label="Zdravotní (4,5%)" hint="Zdravotní pojištění працівника (4,5%) — медичне. Решту (9%) платить роботодавець." /></dt>
               <dd className="text-ink">−{fmt(result.healthMonth)}</dd>
             </div>
             <div className="flex justify-between">
