@@ -100,3 +100,105 @@ export function calcSalaryPL(
     employerCostMonth: round(employerCostMonth),
   };
 }
+
+// ─────────────────────────────────────────────────────────────
+// UMOWA ZLECENIE (договір доручення) — інша формула, ніж UoP.
+// Вивірено проти контрольних прикладів (до копійки).
+// Студент до 26: ZUS=0, zdrowotna=0, PIT=0 (до ulga ліміту) → netto≈brutto.
+// Не-студент: ZUS (chorobowa добровільна), zdrowotna 9%, koszty 20%, PIT.
+
+export const ZLECENIE_PL_2026 = {
+  emerytalna: 0.0976,
+  rentowa: 0.015,
+  chorobowa: 0.0245,        // добровільна
+  zdrowotna: 0.09,
+  kup: 0.20,                // 20% від (brutto − social), не фіксовані 250
+  pit1: 0.12,
+  pit2Rate: 0.32,
+  pitThreshold: 120000,
+  taxReductionAnnual: 3600, // PIT-2 (300/міс)
+  ulgaDlaMlodychLimit: 85528,
+} as const;
+
+export type ZlecenieResult = {
+  bruttoMonth: number;
+  bruttoYear: number;
+  zusYear: number;
+  zdrowotnaYear: number;
+  pitYear: number;
+  nettoYear: number;
+  nettoMonth: number;
+  isStudentExempt: boolean;
+};
+
+/**
+ * @param bruttoMonth місячна сума brutto
+ * @param student студент до 26 (ZUS=0, zdrowotna=0, PIT=0 до ліміту)
+ * @param chorobowa добровільна chorobowa (тільки не-студент)
+ * @param pit2 застосовано PIT-2
+ */
+export function calcZleceniePL(
+  bruttoMonth: number,
+  student = false,
+  chorobowa = true,
+  pit2 = true
+): ZlecenieResult {
+  const z = ZLECENIE_PL_2026;
+  const bruttoYear = bruttoMonth * 12;
+  const round = (n: number) => Math.round(n);
+
+  // ── СТУДЕНТ до 26: повне звільнення до лімігу ulga ──
+  if (student) {
+    // ZUS=0, zdrowotna=0. PIT=0 до ulga ліміту; надлишок оподатковується.
+    let pitYear = 0;
+    if (bruttoYear > z.ulgaDlaMlodychLimit) {
+      // надлишок над лімітом: koszty 20%, потім PIT (без ZUS)
+      const excess = bruttoYear - z.ulgaDlaMlodychLimit;
+      const kup = excess * z.kup;
+      const base = Math.max(0, excess - kup);
+      let tax = base * z.pit1;
+      if (pit2) tax = Math.max(0, tax - z.taxReductionAnnual);
+      pitYear = Math.max(0, tax);
+    }
+    const nettoYear = bruttoYear - pitYear;
+    return {
+      bruttoMonth: round(bruttoMonth),
+      bruttoYear: round(bruttoYear),
+      zusYear: 0,
+      zdrowotnaYear: 0,
+      pitYear: round(pitYear),
+      nettoYear: round(nettoYear),
+      nettoMonth: round(nettoYear / 12),
+      isStudentExempt: true,
+    };
+  }
+
+  // ── НЕ-СТУДЕНТ ──
+  const socialRate = z.emerytalna + z.rentowa + (chorobowa ? z.chorobowa : 0);
+  const zusYear = bruttoYear * socialRate;
+  const zdrowotnaYear = (bruttoYear - zusYear) * z.zdrowotna;
+  const kupYear = (bruttoYear - zusYear) * z.kup;
+  const pitBase = Math.max(0, bruttoYear - zusYear - kupYear);
+
+  let taxBeforeReduction: number;
+  if (pitBase <= z.pitThreshold) {
+    taxBeforeReduction = pitBase * z.pit1;
+  } else {
+    taxBeforeReduction = z.pitThreshold * z.pit1 + (pitBase - z.pitThreshold) * z.pit2Rate;
+  }
+  const reduction = pit2 ? z.taxReductionAnnual : 0;
+  const pitYear = Math.max(0, taxBeforeReduction - reduction);
+
+  const nettoYear = bruttoYear - zusYear - zdrowotnaYear - pitYear;
+  return {
+    bruttoMonth: round(bruttoMonth),
+    bruttoYear: round(bruttoYear),
+    zusYear: round(zusYear),
+    zdrowotnaYear: round(zdrowotnaYear),
+    pitYear: round(pitYear),
+    nettoYear: round(nettoYear),
+    nettoMonth: round(nettoYear / 12),
+    isStudentExempt: false,
+  };
+}
+
