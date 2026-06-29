@@ -5,7 +5,14 @@ import { calcES, ES_TAX_2026 } from "@/lib/taxES";
 import { ArrowUpRight, Info } from "lucide-react";
 
 function fmt(n: number): string {
-  return "€" + n.toLocaleString("es-ES");
+  return "€" + Math.round(n).toLocaleString("en-US").replace(/,/g, "\u00a0");
+}
+
+function fmtCents(n: number): string {
+  const whole = Math.floor(n);
+  const cents = Math.round((n - whole) * 100);
+  const wholeStr = whole.toLocaleString("en-US").replace(/,/g, "\u00a0");
+  return "€" + wholeStr + "," + String(cents).padStart(2, "0");
 }
 
 export function TaxAutonomoESCalculator() {
@@ -90,7 +97,7 @@ export function TaxAutonomoESCalculator() {
             <div className="rounded-xl bg-white p-4">
               <p className="text-xs text-slate-500">Cuota autónomos</p>
               <p className="mt-1 font-display text-lg font-bold text-ink">
-                {fmt(result.cuotaMonth)}<span className="text-xs font-normal text-slate-400"> /міс</span>
+                {fmtCents(result.cuotaMonth)}<span className="text-xs font-normal text-slate-400"> /міс</span>
               </p>
             </div>
             <div className="rounded-xl bg-white p-4">

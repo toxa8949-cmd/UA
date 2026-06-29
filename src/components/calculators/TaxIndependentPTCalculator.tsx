@@ -5,7 +5,7 @@ import { calcPT, PT_COEFFICIENTS, PT_TAX_2026 } from "@/lib/taxPT";
 import { ArrowUpRight, Info } from "lucide-react";
 
 function fmt(n: number): string {
-  return "€" + n.toLocaleString("pt-PT");
+  return "€" + Math.round(n).toLocaleString("en-US").replace(/,/g, "\u00a0");
 }
 
 export function TaxIndependentPTCalculator() {
