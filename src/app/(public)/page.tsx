@@ -4,16 +4,28 @@ import { CountryCard } from "@/components/country/CountryCard";
 import { ArticleCard } from "@/components/article/ArticleCard";
 import { ServiceCard } from "@/components/service/ServiceCard";
 import { Newsletter } from "@/components/home/Newsletter";
+import { HeroDestinations } from "@/components/home/HeroDestinations";
+import { StatsStrip } from "@/components/home/StatsStrip";
 import { getCountries } from "@/server/queries/countries";
 import { getArticles } from "@/server/queries/articles";
 import { getServices } from "@/server/queries/services";
 import { getNews } from "@/server/queries/news";
 import { formatDate } from "@/lib/format";
-import { CALCULATORS, COUNTRY_CODES } from "@/lib/constants";
+import { CALCULATORS } from "@/lib/constants";
 import { Calculator, ArrowRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 export const revalidate = 3600;
+
+// 6 ключових калькуляторів для головної (решта — на /calculators)
+const FEATURED_CALC_SLUGS = [
+  "cost-of-living",
+  "salary-netto-brutto",
+  "tax-jdg-poland",
+  "salary-netto-germany",
+  "relocation-budget",
+  "tax-autonomo-spain",
+];
 
 export default async function HomePage() {
   const [countries, articles, services, news] = await Promise.all([
@@ -23,11 +35,22 @@ export default async function HomePage() {
     getNews({ limit: 4 }),
   ]);
 
+  const featuredCalcs = FEATURED_CALC_SLUGS
+    .map((slug) => CALCULATORS.find((c) => c.slug === slug))
+    .filter((c): c is (typeof CALCULATORS)[number] => Boolean(c));
+
+  const stats = [
+    { value: String(countries.length), label: "Країни" },
+    { value: `${CALCULATORS.length}`, label: "Калькулятори" },
+    { value: "26+", label: "Гайди" },
+    { value: "2026", label: "Актуальні дані" },
+  ];
+
   return (
     <>
       {/* ─── Hero ─── */}
       <section className="relative overflow-hidden border-b border-sand-300 bg-sand-100">
-        <div className="container relative py-16 md:py-24">
+        <div className="container relative py-16 md:py-20">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white px-3 py-1 font-mono text-xs uppercase tracking-widest text-emerald">
               <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
@@ -48,19 +71,13 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Підпис: смуга кодів країн */}
-          <div className="mx-auto mt-14 flex max-w-3xl flex-wrap justify-center gap-x-8 gap-y-4 border-t border-sand-300 pt-8">
-            {countries.map((c) => (
-              <Link key={c.id} href={`/countries/${c.slug}`} className="group flex items-baseline gap-2">
-                <span className="font-mono text-2xl font-bold text-ink transition-colors group-hover:text-emerald">
-                  {COUNTRY_CODES[c.slug] ?? c.slug.slice(0, 2).toUpperCase()}
-                </span>
-                <span className="text-sm text-slate-500 group-hover:text-slate-700">{c.name}</span>
-              </Link>
-            ))}
-          </div>
+          {/* Сигнатура: панель напрямків */}
+          <HeroDestinations countries={countries} />
         </div>
       </section>
+
+      {/* ─── Метрики ─── */}
+      <StatsStrip stats={stats} />
 
       {/* ─── Країни ─── */}
       <Section eyebrow="Напрямки" title="Куди переїхати"
@@ -70,11 +87,13 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* ─── Калькулятори ─── */}
+      {/* ─── Калькулятори (6 ключових) ─── */}
       <Section eyebrow="Інструменти" title="Порахуйте наперед"
-        subtitle="Скільки коштує життя, переїзд і яка буде зарплата на руки." className="bg-sand-200/50">
+        subtitle="Вартість життя, бюджет переїзду, податки й зарплата на руки — за актуальними ставками 2026."
+        className="bg-sand-200/50"
+        action={<Link href="/calculators" className="flex items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">Усі калькулятори <ArrowRight size={15} /></Link>}>
         <div className="grid gap-4 md:grid-cols-3">
-          {CALCULATORS.map((calc) => (
+          {featuredCalcs.map((calc) => (
             <Link key={calc.slug} href={`/calculators/${calc.slug}`}
               className="group rounded-2xl border border-sand-300 bg-white p-6 transition-colors hover:border-emerald/40">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald">
