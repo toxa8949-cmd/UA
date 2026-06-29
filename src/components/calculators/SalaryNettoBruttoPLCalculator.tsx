@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { calcSalaryPL, calcZleceniePL, SALARY_PL_2026 } from "@/lib/salaryPL";
 import { ArrowUpRight, Info } from "lucide-react";
 import { TermHint } from "./TermHint";
+import { EurHint } from "./EurHint";
 
 function fmt(n: number): string {
   return Math.round(n).toLocaleString("en-US").replace(/,/g, "\u00a0") + " zł";
@@ -11,7 +12,7 @@ function fmt(n: number): string {
 
 type Contract = "uop" | "zlecenie";
 
-export function SalaryNettoBruttoPLCalculator() {
+export function SalaryNettoBruttoPLCalculator({ eurRate = 0.23 }: { eurRate?: number }) {
   const [brutto, setBrutto] = useState(8000);
   const [contract, setContract] = useState<Contract>("uop");
   // UoP options
@@ -186,6 +187,7 @@ export function SalaryNettoBruttoPLCalculator() {
           <p className="mt-1 font-display text-4xl font-bold text-ink">
             {fmt(r.nettoMonth)}
             <span className="ml-2 text-base font-normal text-slate-400">netto / місяць</span>
+            <EurHint amount={r.nettoMonth} eurRate={eurRate} />
           </p>
 
           {studentExempt && (
@@ -203,26 +205,26 @@ export function SalaryNettoBruttoPLCalculator() {
             </div>
             <div className="rounded-xl bg-white p-4">
               <p className="text-xs text-slate-500">Netto за рік</p>
-              <p className="mt-1 font-display text-lg font-bold text-ink">{fmt(r.nettoYear)}</p>
+              <p className="mt-1 font-display text-lg font-bold text-ink">{fmt(r.nettoYear)}<EurHint amount={r.nettoYear} eurRate={eurRate} /></p>
             </div>
           </div>
 
           <dl className="mt-4 space-y-1.5 border-t border-emerald/20 pt-4 text-sm">
             <div className="flex justify-between">
               <dt className="text-slate-500">Brutto / місяць</dt>
-              <dd className="text-ink">{fmt(r.bruttoMonth)}</dd>
+              <dd className="text-ink">{fmt(r.bruttoMonth)}<EurHint amount={r.bruttoMonth} eurRate={eurRate} /></dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-slate-500"><TermHint label={isZlec ? "ZUS zleceniobiorcy" : "ZUS працівника"} hint="Соціальні внески працівника: пенсійні, рентові, на хворобу. Решту платить роботодавець окремо." /></dt>
-              <dd className="text-ink">−{fmt(r.zusYear / 12)}</dd>
+              <dd className="text-ink">−{fmt(r.zusYear / 12)}<EurHint amount={r.zusYear / 12} eurRate={eurRate} /></dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-slate-500"><TermHint label="Składka zdrowotna" hint="Медичний внесок 9% від доходу після соцвнесків. Не віднімається від PIT." /></dt>
-              <dd className="text-ink">−{fmt(r.zdrowotnaYear / 12)}</dd>
+              <dd className="text-ink">−{fmt(r.zdrowotnaYear / 12)}<EurHint amount={r.zdrowotnaYear / 12} eurRate={eurRate} /></dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-slate-500"><TermHint label="PIT" hint="Польський прибутковий податок: 12% до 120 000 zł/рік, 32% вище. Зменшується на kwota wolna." /></dt>
-              <dd className="text-ink">−{fmt(r.pitYear / 12)}</dd>
+              <dd className="text-ink">−{fmt(r.pitYear / 12)}<EurHint amount={r.pitYear / 12} eurRate={eurRate} /></dd>
             </div>
           </dl>
 

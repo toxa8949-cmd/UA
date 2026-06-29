@@ -4,12 +4,13 @@ import { useState, useMemo } from "react";
 import { calcSalaryCZ, SALARY_CZ_2026 } from "@/lib/salaryCZ";
 import { ArrowUpRight } from "lucide-react";
 import { TermHint } from "./TermHint";
+import { EurHint } from "./EurHint";
 
 function fmt(n: number): string {
   return Math.round(n).toLocaleString("en-US").replace(/,/g, "\u00a0") + " Kč";
 }
 
-export function SalaryNettoBruttoCZCalculator() {
+export function SalaryNettoBruttoCZCalculator({ eurRate = 0.04 }: { eurRate?: number }) {
   const [brutto, setBrutto] = useState(50000);
   const [children, setChildren] = useState(0);
 
@@ -81,6 +82,7 @@ export function SalaryNettoBruttoCZCalculator() {
           <p className="mt-1 font-display text-4xl font-bold text-ink">
             {fmt(result.nettoMonth)}
             <span className="ml-2 text-base font-normal text-slate-400">čistá / місяць</span>
+            <EurHint amount={result.nettoMonth} eurRate={eurRate} />
           </p>
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -90,22 +92,22 @@ export function SalaryNettoBruttoCZCalculator() {
             </div>
             <div className="rounded-xl bg-white p-4">
               <p className="text-xs text-slate-500">Čistá за рік</p>
-              <p className="mt-1 font-display text-lg font-bold text-ink">{fmt(result.nettoYear)}</p>
+              <p className="mt-1 font-display text-lg font-bold text-ink">{fmt(result.nettoYear)}<EurHint amount={result.nettoYear} eurRate={eurRate} /></p>
             </div>
           </div>
 
           <dl className="mt-4 space-y-1.5 border-t border-emerald/20 pt-4 text-sm">
             <div className="flex justify-between">
               <dt className="text-slate-500">Hrubá mzda / місяць</dt>
-              <dd className="text-ink">{fmt(result.bruttoMonth)}</dd>
+              <dd className="text-ink">{fmt(result.bruttoMonth)}<EurHint amount={result.bruttoMonth} eurRate={eurRate} /></dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-slate-500"><TermHint label="Sociální (7,1%)" hint="Sociální pojištění працівника (7,1%) — пенсійне та на хворобу. Решту (24,8%) платить роботодавець окремо." /></dt>
-              <dd className="text-ink">−{fmt(result.socialMonth)}</dd>
+              <dd className="text-ink">−{fmt(result.socialMonth)}<EurHint amount={result.socialMonth} eurRate={eurRate} /></dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-slate-500"><TermHint label="Zdravotní (4,5%)" hint="Zdravotní pojištění працівника (4,5%) — медичне. Решту (9%) платить роботодавець." /></dt>
-              <dd className="text-ink">−{fmt(result.healthMonth)}</dd>
+              <dd className="text-ink">−{fmt(result.healthMonth)}<EurHint amount={result.healthMonth} eurRate={eurRate} /></dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-slate-500">
@@ -113,6 +115,7 @@ export function SalaryNettoBruttoCZCalculator() {
               </dt>
               <dd className="text-ink">
                 {result.taxMonth < 0 ? "+" : "−"}{fmt(Math.abs(result.taxMonth))}
+                <EurHint amount={Math.abs(result.taxMonth)} eurRate={eurRate} />
               </dd>
             </div>
           </dl>

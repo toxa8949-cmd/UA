@@ -11,6 +11,7 @@ import {
 } from "@/lib/taxPL";
 import { ArrowUpRight, TrendingUp, Info } from "lucide-react";
 import { TermHint } from "./TermHint";
+import { EurHint } from "./EurHint";
 
 function fmt(n: number): string {
   return n.toLocaleString("pl-PL").replace(/,/g, " ") + " zł";
@@ -22,7 +23,7 @@ const FORM_HINTS: Record<TaxResult["form"], string> = {
   skala: "12% до 120 000 zł/рік, 32% вище. Є kwota wolna 30 000 zł.",
 };
 
-export function TaxJdgPLCalculator() {
+export function TaxJdgPLCalculator({ eurRate = 0.23 }: { eurRate?: number }) {
   const [income, setIncome] = useState(15000);
   const [ryczaltRate, setRyczaltRate] = useState(0.12);
   const [zusType, setZusType] = useState<ZusType>("full");
@@ -153,21 +154,22 @@ export function TaxJdgPLCalculator() {
                 <p className="text-sm font-medium text-slate-500">{r.formLabel}</p>
                 <p className="mt-1 font-display text-2xl font-bold text-ink">
                   {fmt(r.netMonth)}
+                  <EurHint amount={r.netMonth} eurRate={eurRate} />
                 </p>
                 <p className="text-xs text-slate-400">на руки / місяць</p>
 
                 <dl className="mt-4 space-y-1.5 border-t border-sand-300 pt-3 text-xs">
                   <div className="flex justify-between">
                     <dt className="text-slate-500"><TermHint label="ZUS" hint="Соціальні внески підприємця: пенсійні, на втрату працездатності, на хворобу. Сплачуються щомісяця незалежно від доходу." /></dt>
-                    <dd className="text-ink">−{fmt(Math.round(r.zusYear / 12))}</dd>
+                    <dd className="text-ink">−{fmt(Math.round(r.zusYear / 12))}<EurHint amount={Math.round(r.zusYear / 12)} eurRate={eurRate} /></dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-slate-500"><TermHint label="Zdrowotna" hint="Складка zdrowotna — медичний внесок. У ryczałt це фіксована сума за порогом доходу; не віднімається від податку." /></dt>
-                    <dd className="text-ink">−{fmt(Math.round(r.zdrowotnaYear / 12))}</dd>
+                    <dd className="text-ink">−{fmt(Math.round(r.zdrowotnaYear / 12))}<EurHint amount={Math.round(r.zdrowotnaYear / 12)} eurRate={eurRate} /></dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-slate-500">Податок</dt>
-                    <dd className="text-ink">−{fmt(Math.round(r.taxYear / 12))}</dd>
+                    <dd className="text-ink">−{fmt(Math.round(r.taxYear / 12))}<EurHint amount={Math.round(r.taxYear / 12)} eurRate={eurRate} /></dd>
                   </div>
                 </dl>
                 <p className="mt-3 text-xs leading-relaxed text-slate-400">
