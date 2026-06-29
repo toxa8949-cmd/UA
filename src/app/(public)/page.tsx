@@ -57,11 +57,11 @@ export default async function HomePage() {
               Гайд для українців у Європі
             </div>
             <h1 className="font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-ink md:text-6xl">
-              Переїзд за кордон<br />без зайвого хаосу
+              Усе про життя за кордоном<br />в одному місці
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
-              Документи, податки, житло й банки — зрозуміло і по ділу. Порівнюйте країни,
-              рахуйте витрати, обирайте перевірені сервіси.
+              Безкоштовний довідник для українців у Європі: документи, податки, житло, банки,
+              робота й калькулятори витрат. Зрозуміло, актуально, без води.
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-3">
               <ButtonLink href="/countries" size="lg">Обрати країну</ButtonLink>
