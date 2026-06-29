@@ -47,6 +47,11 @@ export const CALCULATORS = [
     description: "Точний розрахунок netto з brutto на umowa o pracę: ZUS, zdrowotna, PIT. Актуально на 2026.",
   },
   {
+    slug: "salary-netto-czech",
+    title: "Зарплата netto/brutto (Чехія)",
+    description: "Точний розрахунок čistá mzda з hrubá: sociální, zdravotní, daň. Актуально на 2026.",
+  },
+  {
     slug: "tax-jdg-poland",
     title: "Податки ФОП (JDG) у Польщі",
     description: "Скільки на руки на JDG: Ryczałt, Liniowy чи Skala. Актуально на 2026.",
