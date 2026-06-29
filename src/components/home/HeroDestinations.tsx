@@ -11,7 +11,7 @@ import { ArrowUpRight } from "lucide-react";
  */
 export function HeroDestinations({ countries }: { countries: Country[] }) {
   return (
-    <div className="mx-auto mt-14 max-w-4xl">
+    <div className="mx-auto mt-10 max-w-4xl">
       <p className="mb-3 text-center font-mono text-xs uppercase tracking-widest text-slate-400">
         Оберіть країну — і ми проведемо вас крок за кроком
       </p>

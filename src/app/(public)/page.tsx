@@ -50,20 +50,20 @@ export default async function HomePage() {
     <>
       {/* ─── Hero ─── */}
       <section className="relative overflow-hidden border-b border-sand-300 bg-sand-100">
-        <div className="container relative py-16 md:py-20">
+        <div className="container relative py-12 md:py-14">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white px-3 py-1 font-mono text-xs uppercase tracking-widest text-emerald">
               <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
               Гайд для українців у Європі
             </div>
-            <h1 className="font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-ink md:text-6xl">
-              Усе про життя за кордоном<br />в одному місці
+            <h1 className="font-display text-3xl font-extrabold leading-[1.1] tracking-tight text-ink md:text-5xl">
+              Усе про життя за кордоном — в одному місці
             </h1>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-slate-600 md:text-lg">
               Безкоштовний довідник для українців у Європі: документи, податки, житло, банки,
               робота й калькулятори витрат. Зрозуміло, актуально, без води.
             </p>
-            <div className="mt-9 flex flex-wrap justify-center gap-3">
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
               <ButtonLink href="/countries" size="lg">Обрати країну</ButtonLink>
               <ButtonLink href="/calculators" size="lg" variant="outline">
                 Порахувати витрати
