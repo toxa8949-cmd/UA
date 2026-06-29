@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { SalaryNettoBruttoCZCalculator } from "@/components/calculators/SalaryNettoBruttoCZCalculator";
 import { CalculatorSeoBlock } from "@/components/calculators/CalculatorSeoBlock";
+import { RelatedCalculators } from "@/components/calculators/RelatedCalculators";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -64,6 +65,8 @@ export default function Page() {
             },
           ]}
         />
+
+        <RelatedCalculators currentSlug="salary-netto-czech" />
       </div>
     </>
   );

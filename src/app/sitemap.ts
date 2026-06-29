@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${base}/calculators/${c.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
-    priority: 0.6,
+    priority: 0.8,
   }));
 
   // Якщо БД ще не готова або немає env — повертаємо лише статичні сторінки,

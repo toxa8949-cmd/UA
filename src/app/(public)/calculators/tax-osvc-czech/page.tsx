@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { TaxOsvcCZCalculator } from "@/components/calculators/TaxOsvcCZCalculator";
 import { CalculatorSeoBlock } from "@/components/calculators/CalculatorSeoBlock";
+import { RelatedCalculators } from "@/components/calculators/RelatedCalculators";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -66,6 +67,8 @@ export default function Page() {
             },
           ]}
         />
+
+        <RelatedCalculators currentSlug="tax-osvc-czech" />
       </div>
     </>
   );

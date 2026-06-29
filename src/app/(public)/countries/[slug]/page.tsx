@@ -22,6 +22,7 @@ import { getServicesForCountry } from "@/server/queries/services";
 import { getCitiesForCountry } from "@/server/queries/cities";
 import { buildMetadata, faqJsonLd } from "@/lib/seo";
 import { RELATED_COUNTRIES } from "@/lib/constants";
+import { CountryCalculators } from "@/components/countries/CountryCalculators";
 import { estimateCost } from "@/lib/costModel";
 import { formatMoney } from "@/lib/format";
 import { ArrowUpRight } from "lucide-react";
@@ -254,6 +255,13 @@ export default async function CountryPage({
           </div>
         </Section>
       )}
+
+      {/* Калькулятори країни */}
+      <Section eyebrow="Калькулятори" title={`Калькулятори для країни ${country.name}`}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <CountryCalculators countrySlug={country.slug} variant="bare" />
+        </div>
+      </Section>
 
       {/* Схожі країни */}
       {relatedCountries.length > 0 && (
