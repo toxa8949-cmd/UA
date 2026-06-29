@@ -46,6 +46,11 @@ export const CALCULATORS = [
     title: "Зарплата netto/brutto",
     description: "Приблизний розрахунок чистої зарплати після податків.",
   },
+  {
+    slug: "tax-jdg-poland",
+    title: "Податки ФОП (JDG) у Польщі",
+    description: "Скільки на руки на JDG: Ryczałt, Liniowy чи Skala. Актуально на 2026.",
+  },
 ] as const;
 
 export const MAIN_NAV = [
