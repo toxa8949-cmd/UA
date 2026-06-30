@@ -21,13 +21,13 @@ export function CountryCard({ country }: { country: Country }) {
             alt={country.name}
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
-          {/* Затемнення зверху для читабельності тексту */}
-          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" />
-          <div className="absolute left-4 top-3 flex items-center gap-2">
-            <span className="font-display text-2xl font-bold text-white drop-shadow-sm">
-              {country.name}
+          {/* Легке затемнення зверху для глибини */}
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/30 to-transparent" />
+          <div className="absolute left-4 top-4">
+            <span className="inline-flex items-center gap-2 rounded-full bg-black/35 px-4 py-1.5 backdrop-blur-md ring-1 ring-white/20">
+              <span className="font-display text-lg font-bold text-white">{country.name}</span>
+              <span className="text-base leading-none">{country.emoji}</span>
             </span>
-            <span className="text-2xl leading-none drop-shadow-sm">{country.emoji}</span>
           </div>
         </div>
       ) : (
