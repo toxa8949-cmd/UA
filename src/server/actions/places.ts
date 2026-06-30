@@ -97,10 +97,23 @@ export async function savePlace(formData: FormData) {
   if (coverUrl !== null) payload.cover_image = coverUrl;
   if (logoUrl !== null) payload.logo = logoUrl;
 
+  let dbError: { message: string; details?: string; hint?: string; code?: string } | null = null;
   if (id) {
-    await supabase.from("places").update(payload as never).eq("id", id);
+    const { error } = await supabase.from("places").update(payload as never).eq("id", id);
+    dbError = error;
   } else {
-    await supabase.from("places").insert(payload as never);
+    const { error } = await supabase.from("places").insert(payload as never);
+    dbError = error;
+  }
+
+  if (dbError) {
+    // Показуємо справжню причину (колонка/тип/enum) замість голого 500
+    throw new Error(
+      `Помилка збереження: ${dbError.message}` +
+        (dbError.details ? ` | ${dbError.details}` : "") +
+        (dbError.hint ? ` | підказка: ${dbError.hint}` : "") +
+        (dbError.code ? ` | код: ${dbError.code}` : "")
+    );
   }
 
   revalidatePath("/places");
