@@ -13,7 +13,7 @@ export function CountryCard({ country }: { country: Country }) {
       className="group relative block overflow-hidden rounded-2xl border border-sand-300 bg-white transition-colors hover:border-emerald/40"
     >
       {country.cover_image ? (
-        /* Банер уже містить назву країни + прапор — паспортну смугу не дублюємо */
+        /* Банер без тексту — назву й прапор накладаємо поверх із затемненням */
         <div className="relative aspect-[3/2] overflow-hidden bg-sand-200">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -21,6 +21,14 @@ export function CountryCard({ country }: { country: Country }) {
             alt={country.name}
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
+          {/* Затемнення зверху для читабельності тексту */}
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" />
+          <div className="absolute left-4 top-3 flex items-center gap-2">
+            <span className="font-display text-2xl font-bold text-white drop-shadow-sm">
+              {country.name}
+            </span>
+            <span className="text-2xl leading-none drop-shadow-sm">{country.emoji}</span>
+          </div>
         </div>
       ) : (
         /* Без банера — паспортна смуга з кодом країни */

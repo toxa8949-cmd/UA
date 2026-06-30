@@ -82,6 +82,15 @@ export function CityCatalog({
             alt={city.name}
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
+          <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/55 to-transparent" />
+          <div className="absolute left-4 top-3 flex items-center gap-2">
+            <span className="font-display text-xl font-bold text-white drop-shadow-sm">
+              {city.name}
+            </span>
+            {city.country?.emoji && (
+              <span className="text-lg leading-none drop-shadow-sm">{city.country.emoji}</span>
+            )}
+          </div>
         </div>
       )}
       <div className="flex flex-1 flex-col p-5">
@@ -90,8 +99,8 @@ export function CityCatalog({
           {!city.cover_image && (
             <span className="font-display font-semibold text-ink">{city.name}</span>
           )}
-          {city.country && (
-            <span className={city.cover_image ? "text-xs text-slate-400" : "ml-2 text-xs text-slate-400"}>
+          {city.country && !city.cover_image && (
+            <span className="ml-2 text-xs text-slate-400">
               {city.country.emoji} {city.country.name}
             </span>
           )}
