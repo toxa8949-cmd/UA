@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { createPublicSupabase } from "@/lib/supabase";
+import { getPlaceLandingCombos } from "@/server/queries/places";
 import { SITE, CALCULATORS } from "@/lib/constants";
 
 export const revalidate = 3600;
@@ -100,6 +101,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...build(news, "/news", "daily", 0.6),
       ...build(places, "/places", "weekly", 0.7),
     ];
+
+    // SEO landing-сторінки category × location
+    try {
+      const combos = await getPlaceLandingCombos();
+      const landing: MetadataRoute.Sitemap = combos.map((c) => ({
+        url: c.location
+          ? `${base}/places/c/${c.category}/${c.location}`
+          : `${base}/places/c/${c.category}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.75,
+      }));
+      dynamicPages = [...dynamicPages, ...landing];
+    } catch {
+      /* ignore landing errors */
+    }
   } catch {
     dynamicPages = [];
   }
