@@ -28,19 +28,24 @@ async function uploadImage(
   prefix: string
 ): Promise<string | null> {
   if (!file || file.size === 0) return null;
-  const supabase = createAdminSupabase();
-  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
-  const path = `${prefix}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const { error } = await supabase.storage
-    .from(BUCKET)
-    .upload(path, buffer, { contentType: file.type || "image/jpeg", upsert: false });
-  if (error) {
-    console.error("upload error", error.message);
+  try {
+    const supabase = createAdminSupabase();
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `${prefix}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const { error } = await supabase.storage
+      .from(BUCKET)
+      .upload(path, buffer, { contentType: file.type || "image/jpeg", upsert: false });
+    if (error) {
+      console.error("Storage upload error:", error.message);
+      return null;
+    }
+    const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+    return data.publicUrl ?? null;
+  } catch (e) {
+    console.error("Storage upload exception:", e);
     return null;
   }
-  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
-  return data.publicUrl;
 }
 
 export async function savePlace(formData: FormData) {
