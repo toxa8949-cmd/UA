@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { signOut } from "@/server/actions/auth";
 import {
-  LayoutDashboard, FileText, Globe, Package, Tag, LogOut,
+  LayoutDashboard, FileText, Globe, Package, Tag, LogOut, MapPin,
 } from "lucide-react";
 
 const NAV = [
@@ -11,6 +11,7 @@ const NAV = [
   { href: "/admin/articles", label: "Статті", icon: FileText },
   { href: "/admin/countries", label: "Країни", icon: Globe },
   { href: "/admin/services", label: "Сервіси", icon: Package },
+  { href: "/admin/places", label: "Заклади", icon: MapPin },
   { href: "/admin/deals", label: "Бонуси", icon: Tag },
 ];
 

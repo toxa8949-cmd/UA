@@ -1,8 +1,53 @@
 import "server-only";
 import { createAdminSupabase } from "@/lib/supabase";
-import type { Article, Country, Service, Deal, Category } from "@/types/db";
+import type { Article, Country, Service, Deal, Category, Place, City } from "@/types/db";
 
 // Адмін-запити: бачать ВЕСЬ контент (включно з draft/archived).
+
+// ─── Places ──────────────────────────────────────────────────
+
+export type AdminPlace = Place & {
+  country: { name: string } | null;
+  city: { name: string } | null;
+};
+
+export async function adminListPlaces(): Promise<AdminPlace[]> {
+  const supabase = createAdminSupabase();
+  const { data } = await supabase
+    .from("places")
+    .select("*, country:countries(name), city:cities(name)")
+    // pending — спочатку (нові заявки), далі за датою
+    .order("status", { ascending: true })
+    .order("created_at", { ascending: false });
+  return (data ?? []) as unknown as AdminPlace[];
+}
+
+export async function adminGetPlace(id: string): Promise<Place | null> {
+  const supabase = createAdminSupabase();
+  const { data } = await supabase.from("places").select("*").eq("id", id).maybeSingle();
+  return (data ?? null) as Place | null;
+}
+
+export async function adminPlacesRefs(): Promise<{ countries: Country[]; cities: City[] }> {
+  const supabase = createAdminSupabase();
+  const [{ data: countries }, { data: cities }] = await Promise.all([
+    supabase.from("countries").select("*").order("name"),
+    supabase.from("cities").select("*").order("name"),
+  ]);
+  return {
+    countries: (countries ?? []) as Country[],
+    cities: (cities ?? []) as City[],
+  };
+}
+
+export async function adminPendingPlacesCount(): Promise<number> {
+  const supabase = createAdminSupabase();
+  const { count } = await supabase
+    .from("places")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pending");
+  return count ?? 0;
+}
 
 export async function adminListArticles(): Promise<
   (Article & { country_name: string | null })[]
