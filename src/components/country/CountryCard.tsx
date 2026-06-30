@@ -12,9 +12,9 @@ export function CountryCard({ country }: { country: Country }) {
       href={`/countries/${country.slug}`}
       className="group relative block overflow-hidden rounded-2xl border border-sand-300 bg-white transition-colors hover:border-emerald/40"
     >
-      {/* Банер країни (якщо завантажений) */}
-      {country.cover_image && (
-        <div className="relative aspect-[5/2] overflow-hidden bg-sand-200">
+      {country.cover_image ? (
+        /* Банер уже містить назву країни + прапор — паспортну смугу не дублюємо */
+        <div className="relative aspect-[3/2] overflow-hidden bg-sand-200">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={country.cover_image}
@@ -22,16 +22,16 @@ export function CountryCard({ country }: { country: Country }) {
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         </div>
-      )}
-
-      {/* Верхня смуга з кодом країни — паспортний акцент */}
-      <div className="flex items-start justify-between border-b border-sand-200 bg-sand-50 px-5 py-4">
-        <div>
-          <div className="font-mono text-3xl font-bold tracking-tight text-ink">{code}</div>
-          <div className="mt-0.5 text-sm font-medium text-slate-600">{country.name}</div>
+      ) : (
+        /* Без банера — паспортна смуга з кодом країни */
+        <div className="flex items-start justify-between border-b border-sand-200 bg-sand-50 px-5 py-4">
+          <div>
+            <div className="font-mono text-3xl font-bold tracking-tight text-ink">{code}</div>
+            <div className="mt-0.5 text-sm font-medium text-slate-600">{country.name}</div>
+          </div>
+          <span className="text-3xl leading-none">{country.emoji}</span>
         </div>
-        <span className="text-3xl leading-none">{country.emoji}</span>
-      </div>
+      )}
 
       {/* Тіло */}
       <div className="px-5 py-4">

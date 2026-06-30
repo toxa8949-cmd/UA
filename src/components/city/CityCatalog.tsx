@@ -75,7 +75,7 @@ export function CityCatalog({
       className="group flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-white transition-colors hover:border-emerald/40"
     >
       {city.cover_image && (
-        <div className="relative aspect-[2/1] overflow-hidden bg-sand-200">
+        <div className="relative aspect-[3/2] overflow-hidden bg-sand-200">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={city.cover_image}
@@ -87,9 +87,11 @@ export function CityCatalog({
       <div className="flex flex-1 flex-col p-5">
       <div className="flex items-start justify-between">
         <div>
-          <span className="font-display font-semibold text-ink">{city.name}</span>
+          {!city.cover_image && (
+            <span className="font-display font-semibold text-ink">{city.name}</span>
+          )}
           {city.country && (
-            <span className="ml-2 text-xs text-slate-400">
+            <span className={city.cover_image ? "text-xs text-slate-400" : "ml-2 text-xs text-slate-400"}>
               {city.country.emoji} {city.country.name}
             </span>
           )}
