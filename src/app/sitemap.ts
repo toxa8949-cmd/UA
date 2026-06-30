@@ -4,10 +4,36 @@ import { SITE, CALCULATORS } from "@/lib/constants";
 
 export const revalidate = 3600;
 
+type SlugRow = { slug: string; updated_at: string | null };
+
+/** Безпечна дата: невалідне/порожнє значення → поточний момент (валідний <lastmod>). */
+function safeDate(value: string | null | undefined): Date {
+  if (!value) return new Date();
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? new Date() : d;
+}
+
+/** Окремий безпечний запит: якщо таблиця відсутня чи помилка — повертає []. */
+async function fetchSlugs(
+  supabase: ReturnType<typeof createPublicSupabase>,
+  table: string
+): Promise<SlugRow[]> {
+  try {
+    const { data, error } = await supabase
+      .from(table)
+      .select("slug, updated_at")
+      .eq("status", "published");
+    if (error) return [];
+    return (data ?? []) as SlugRow[];
+  } catch {
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = SITE.url;
 
-  const staticPages = [
+  const staticPaths = [
     "",
     "/countries",
     "/cities",
@@ -23,82 +49,60 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/privacy-policy",
     "/terms",
     "/affiliate-disclosure",
-  ].map((path) => ({
+  ];
+
+  const staticPages: MetadataRoute.Sitemap = staticPaths.map((path) => ({
     url: `${base}${path}`,
     lastModified: new Date(),
-    changeFrequency: "weekly" as const,
+    changeFrequency: "weekly",
     priority: path === "" ? 1 : 0.7,
   }));
 
-  const calcPages = CALCULATORS.map((c) => ({
+  const calcPages: MetadataRoute.Sitemap = CALCULATORS.map((c) => ({
     url: `${base}/calculators/${c.slug}`,
     lastModified: new Date(),
-    changeFrequency: "monthly" as const,
+    changeFrequency: "monthly",
     priority: 0.8,
   }));
 
-  // Якщо БД ще не готова або немає env — повертаємо лише статичні сторінки,
-  // щоб білд не падав.
+  let dynamicPages: MetadataRoute.Sitemap = [];
   try {
     const supabase = createPublicSupabase();
     const [countries, articles, services, cities, news, places] = await Promise.all([
-      supabase.from("countries").select("slug, updated_at").eq("status", "published"),
-      supabase.from("articles").select("slug, updated_at").eq("status", "published"),
-      supabase.from("services").select("slug, updated_at").eq("status", "published"),
-      supabase.from("cities").select("slug, updated_at").eq("status", "published"),
-      supabase.from("news").select("slug, updated_at").eq("status", "published"),
-      supabase.from("places").select("slug, updated_at").eq("status", "published"),
+      fetchSlugs(supabase, "countries"),
+      fetchSlugs(supabase, "articles"),
+      fetchSlugs(supabase, "services"),
+      fetchSlugs(supabase, "cities"),
+      fetchSlugs(supabase, "news"),
+      fetchSlugs(supabase, "places"),
     ]);
 
-    type SlugRow = { slug: string; updated_at: string };
-    const cRows = (countries.data ?? []) as SlugRow[];
-    const aRows = (articles.data ?? []) as SlugRow[];
-    const sRows = (services.data ?? []) as SlugRow[];
-    const cityRows = (cities.data ?? []) as SlugRow[];
-    const newsRows = (news.data ?? []) as SlugRow[];
-    const placeRows = (places.data ?? []) as SlugRow[];
+    const build = (
+      rows: SlugRow[],
+      prefix: string,
+      changeFrequency: "weekly" | "monthly" | "daily",
+      priority: number
+    ): MetadataRoute.Sitemap =>
+      rows
+        .filter((r) => r.slug)
+        .map((r) => ({
+          url: `${base}${prefix}/${r.slug}`,
+          lastModified: safeDate(r.updated_at),
+          changeFrequency,
+          priority,
+        }));
 
-    const dynamicPages = [
-      ...cRows.map((c) => ({
-        url: `${base}/countries/${c.slug}`,
-        lastModified: new Date(c.updated_at),
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      })),
-      ...aRows.map((a) => ({
-        url: `${base}/articles/${a.slug}`,
-        lastModified: new Date(a.updated_at),
-        changeFrequency: "monthly" as const,
-        priority: 0.7,
-      })),
-      ...sRows.map((s) => ({
-        url: `${base}/services/${s.slug}`,
-        lastModified: new Date(s.updated_at),
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      })),
-      ...cityRows.map((c) => ({
-        url: `${base}/cities/${c.slug}`,
-        lastModified: new Date(c.updated_at),
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      })),
-      ...newsRows.map((n) => ({
-        url: `${base}/news/${n.slug}`,
-        lastModified: new Date(n.updated_at),
-        changeFrequency: "daily" as const,
-        priority: 0.6,
-      })),
-      ...placeRows.map((p) => ({
-        url: `${base}/places/${p.slug}`,
-        lastModified: new Date(p.updated_at),
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      })),
+    dynamicPages = [
+      ...build(countries, "/countries", "weekly", 0.8),
+      ...build(articles, "/articles", "monthly", 0.7),
+      ...build(services, "/services", "monthly", 0.6),
+      ...build(cities, "/cities", "weekly", 0.8),
+      ...build(news, "/news", "daily", 0.6),
+      ...build(places, "/places", "weekly", 0.7),
     ];
-
-    return [...staticPages, ...calcPages, ...dynamicPages];
   } catch {
-    return [...staticPages, ...calcPages];
+    dynamicPages = [];
   }
+
+  return [...staticPages, ...calcPages, ...dynamicPages];
 }
