@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { adminGetCountry } from "@/server/queries/admin";
 import { saveCountry } from "@/server/actions/countries";
 import { Field, TextArea } from "@/components/admin/Field";
+import { BannerUploader } from "@/components/admin/BannerUploader";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,7 @@ export default async function EditCountry({
       <h1 className="text-2xl font-bold text-slate-900">Редагувати: {c.name}</h1>
       <form action={saveCountry} className="mt-6 max-w-2xl space-y-4">
         <input type="hidden" name="id" value={c.id} />
+        <BannerUploader defaultUrl={c.cover_image} label="Банер країни (співвідношення ~2:1)" />
         <TextArea label="Короткий опис" name="short_description" defaultValue={c.short_description} rows={2} />
         <div className="grid grid-cols-2 gap-4">
           <Field label="Столиця" name="capital" defaultValue={c.capital} />

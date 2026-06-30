@@ -12,6 +12,7 @@ export interface Country {
   emoji: string | null;
   short_description: string | null;
   full_description: string | null;
+  cover_image: string | null;
   capital: string | null;
   currency: string | null;
   language: string | null;

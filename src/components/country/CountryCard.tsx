@@ -12,6 +12,18 @@ export function CountryCard({ country }: { country: Country }) {
       href={`/countries/${country.slug}`}
       className="group relative block overflow-hidden rounded-2xl border border-sand-300 bg-white transition-colors hover:border-emerald/40"
     >
+      {/* Банер країни (якщо завантажений) */}
+      {country.cover_image && (
+        <div className="relative aspect-[5/2] overflow-hidden bg-sand-200">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={country.cover_image}
+            alt={country.name}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          />
+        </div>
+      )}
+
       {/* Верхня смуга з кодом країни — паспортний акцент */}
       <div className="flex items-start justify-between border-b border-sand-200 bg-sand-50 px-5 py-4">
         <div>

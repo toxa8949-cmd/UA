@@ -144,6 +144,18 @@ export default async function CountryPage({
       <CountryNav available={available} />
 
       {/* Hero */}
+      {country.cover_image && (
+        <div className="container pt-4">
+          <div className="relative aspect-[3/1] w-full overflow-hidden rounded-3xl bg-sand-200">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={country.cover_image}
+              alt={country.name}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
+        </div>
+      )}
       <section className="border-b border-sand-300 bg-sand-200/40">
         <div className="container py-12">
           <div className="flex items-center gap-4">

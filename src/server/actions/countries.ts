@@ -52,12 +52,37 @@ function parseFaq(raw: string | null): { q: string; a: string }[] {
   return [];
 }
 
+async function uploadBanner(file: File | null): Promise<string | null> {
+  if (!file || file.size === 0) return null;
+  try {
+    const supabase = createAdminSupabase();
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `countries/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const { error } = await supabase.storage
+      .from("places")
+      .upload(path, buffer, { contentType: file.type || "image/jpeg", upsert: false });
+    if (error) {
+      console.error("Country banner upload error:", error.message);
+      return null;
+    }
+    const { data } = supabase.storage.from("places").getPublicUrl(path);
+    return data.publicUrl ?? null;
+  } catch (e) {
+    console.error("Country banner upload exception:", e);
+    return null;
+  }
+}
+
 export async function saveCountry(formData: FormData) {
   await requireAdmin();
   const supabase = createAdminSupabase();
   const id = str(formData, "id");
 
-  const payload = {
+  const bannerFile = formData.get("cover_file") as File | null;
+  const uploadedBanner = await uploadBanner(bannerFile);
+
+  const payload: Record<string, unknown> = {
     short_description: str(formData, "short_description"),
     capital: str(formData, "capital"),
     currency: str(formData, "currency"),
@@ -77,10 +102,16 @@ export async function saveCountry(formData: FormData) {
     guides: parseGuides(str(formData, "guides")),
     updated_at: new Date().toISOString(),
   };
+  const banner = uploadedBanner ?? str(formData, "cover_image");
+  if (banner !== null) payload.cover_image = banner;
 
   if (id) {
-    await supabase.from("countries").update(payload as never).eq("id", id);
+    const { error } = await supabase.from("countries").update(payload as never).eq("id", id);
+    if (error) {
+      throw new Error(`Помилка збереження країни: ${error.message}${error.code ? ` | код: ${error.code}` : ""}`);
+    }
     revalidatePath(`/countries`);
+    revalidatePath(`/`);
   }
   revalidatePath("/admin/countries");
   redirect("/admin/countries");
