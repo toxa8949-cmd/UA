@@ -125,14 +125,14 @@ export default async function PlacePage({
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           {/* Основне */}
           <div className="min-w-0">
-            <div className={place.cover_image ? "-mt-10 flex items-end gap-4" : "flex items-start gap-4"}>
+            <div className={`flex items-start gap-4 ${place.cover_image ? "mt-6" : ""}`}>
               {place.logo ? (
-                <span className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-white bg-white shadow-sm">
+                <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-sand-300 bg-white">
                   <Image
                     src={place.logo}
                     alt={`${place.name} лого`}
-                    width={80}
-                    height={80}
+                    width={64}
+                    height={64}
                     className="h-full w-full object-cover"
                   />
                 </span>
@@ -141,7 +141,7 @@ export default async function PlacePage({
                   {Icon && <Icon size={26} />}
                 </span>
               )}
-              <div className={place.cover_image ? "pb-1" : ""}>
+              <div>
                 <p className="font-mono text-xs uppercase tracking-widest text-emerald">{label}</p>
                 <h1 className="mt-1 font-display text-3xl font-bold text-ink">{place.name}</h1>
                 <p className="mt-1 text-sm text-slate-500">
