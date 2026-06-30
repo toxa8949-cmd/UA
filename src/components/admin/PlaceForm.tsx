@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { savePlace } from "@/server/actions/places";
 import {
   PLACE_GROUPS,
   PLACE_CATEGORIES,
   LANGUAGE_LABELS,
 } from "@/lib/places";
-import type { Place, Country, City } from "@/types/db";
+import type { Place } from "@/types/db";
+import type { PlaceRefCountry, PlaceRefCity } from "@/server/queries/admin";
 
 const LANG_ORDER = ["uk", "pl", "cs", "de", "es", "pt", "en"];
 
@@ -18,8 +18,8 @@ export function PlaceForm({
   cities,
 }: {
   place: Place | null;
-  countries: Country[];
-  cities: City[];
+  countries: PlaceRefCountry[];
+  cities: PlaceRefCity[];
 }) {
   const [countryId, setCountryId] = useState(place?.country_id ?? "");
   const [coverPreview, setCoverPreview] = useState<string | null>(place?.cover_image ?? null);
@@ -246,11 +246,14 @@ function ImagePicker({
   onPick: (url: string | null) => void;
   aspect: string;
 }) {
+  // Показуємо <Image> лише для валідних http(s)/blob URL — інакше плейсхолдер
+  const showImg = !!preview && /^(https?:|blob:)/.test(preview);
   return (
     <div>
       <div className={`relative ${aspect} overflow-hidden rounded-lg border border-dashed border-slate-300 bg-slate-50`}>
-        {preview ? (
-          <Image src={preview} alt="" fill className="object-cover" sizes="300px" />
+        {showImg ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={preview!} alt="" className="absolute inset-0 h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
             Немає фото

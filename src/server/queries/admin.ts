@@ -1,6 +1,6 @@
 import "server-only";
 import { createAdminSupabase } from "@/lib/supabase";
-import type { Article, Country, Service, Deal, Category, Place, City } from "@/types/db";
+import type { Article, Country, Service, Deal, Category, Place } from "@/types/db";
 
 // Адмін-запити: бачать ВЕСЬ контент (включно з draft/archived).
 
@@ -28,15 +28,21 @@ export async function adminGetPlace(id: string): Promise<Place | null> {
   return (data ?? null) as Place | null;
 }
 
-export async function adminPlacesRefs(): Promise<{ countries: Country[]; cities: City[] }> {
+export type PlaceRefCountry = { id: string; name: string; emoji: string | null };
+export type PlaceRefCity = { id: string; name: string; country_id: string };
+
+export async function adminPlacesRefs(): Promise<{
+  countries: PlaceRefCountry[];
+  cities: PlaceRefCity[];
+}> {
   const supabase = createAdminSupabase();
   const [{ data: countries }, { data: cities }] = await Promise.all([
-    supabase.from("countries").select("*").order("name"),
-    supabase.from("cities").select("*").order("name"),
+    supabase.from("countries").select("id, name, emoji").order("name"),
+    supabase.from("cities").select("id, name, country_id").order("name"),
   ]);
   return {
-    countries: (countries ?? []) as Country[],
-    cities: (cities ?? []) as City[],
+    countries: (countries ?? []) as PlaceRefCountry[],
+    cities: (cities ?? []) as PlaceRefCity[],
   };
 }
 
