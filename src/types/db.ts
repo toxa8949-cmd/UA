@@ -95,6 +95,7 @@ export interface City {
   average_salary: number | null;
   cost_of_living_index: number | null;
   full_description: string | null;
+  cover_image: string | null;
   guides: Record<string, { title: string; body: string }[]>;
   faq: { q: string; a: string }[];
   status: ContentStatus;

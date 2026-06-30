@@ -3,7 +3,7 @@ import { createPublicSupabase } from "@/lib/supabase";
 import type { City, CityWithCountry, Country } from "@/types/db";
 
 const LIST_FIELDS =
-  "id, country_id, name, slug, emoji, short_description, population, average_rent, average_salary, cost_of_living_index, status";
+  "id, country_id, name, slug, emoji, short_description, population, average_rent, average_salary, cost_of_living_index, cover_image, status";
 
 export async function getCities(opts?: { countryId?: string; limit?: number }): Promise<City[]> {
   const supabase = createPublicSupabase();

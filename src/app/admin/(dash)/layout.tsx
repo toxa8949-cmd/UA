@@ -3,13 +3,14 @@ import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { signOut } from "@/server/actions/auth";
 import {
-  LayoutDashboard, FileText, Globe, Package, Tag, LogOut, MapPin,
+  LayoutDashboard, FileText, Globe, Package, Tag, LogOut, MapPin, Building2,
 } from "lucide-react";
 
 const NAV = [
   { href: "/admin", label: "Дашборд", icon: LayoutDashboard },
   { href: "/admin/articles", label: "Статті", icon: FileText },
   { href: "/admin/countries", label: "Країни", icon: Globe },
+  { href: "/admin/cities", label: "Міста", icon: Building2 },
   { href: "/admin/services", label: "Сервіси", icon: Package },
   { href: "/admin/places", label: "Заклади", icon: MapPin },
   { href: "/admin/deals", label: "Бонуси", icon: Tag },

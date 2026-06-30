@@ -72,8 +72,19 @@ export function CityCatalog({
   const CityCard = ({ city }: { city: CityWithCountry }) => (
     <Link
       href={`/cities/${city.slug}`}
-      className="group flex flex-col rounded-2xl border border-sand-300 bg-white p-5 transition-colors hover:border-emerald/40"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-white transition-colors hover:border-emerald/40"
     >
+      {city.cover_image && (
+        <div className="relative aspect-[2/1] overflow-hidden bg-sand-200">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={city.cover_image}
+            alt={city.name}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          />
+        </div>
+      )}
+      <div className="flex flex-1 flex-col p-5">
       <div className="flex items-start justify-between">
         <div>
           <span className="font-display font-semibold text-ink">{city.name}</span>
@@ -103,6 +114,7 @@ export function CityCatalog({
           </span>
         )}
         {city.population && <span>{city.population}</span>}
+      </div>
       </div>
     </Link>
   );

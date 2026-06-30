@@ -1,6 +1,6 @@
 import "server-only";
 import { createAdminSupabase } from "@/lib/supabase";
-import type { Article, Country, Service, Deal, Category, Place } from "@/types/db";
+import type { Article, Country, Service, Deal, Category, Place, City } from "@/types/db";
 
 // Адмін-запити: бачать ВЕСЬ контент (включно з draft/archived).
 
@@ -54,6 +54,33 @@ export async function adminPendingPlacesCount(): Promise<number> {
     .eq("status", "pending");
   return count ?? 0;
 }
+
+// ─── Cities ──────────────────────────────────────────────────
+
+export type AdminCity = {
+  id: string;
+  name: string;
+  slug: string;
+  country_id: string;
+  cover_image: string | null;
+  country: { name: string; emoji: string | null } | null;
+};
+
+export async function adminListCities(): Promise<AdminCity[]> {
+  const supabase = createAdminSupabase();
+  const { data } = await supabase
+    .from("cities")
+    .select("id, name, slug, country_id, cover_image, country:countries(name, emoji)")
+    .order("name");
+  return (data ?? []) as unknown as AdminCity[];
+}
+
+export async function adminGetCity(id: string): Promise<City | null> {
+  const supabase = createAdminSupabase();
+  const { data } = await supabase.from("cities").select("*").eq("id", id).maybeSingle();
+  return (data ?? null) as City | null;
+}
+
 
 export async function adminListArticles(): Promise<
   (Article & { country_name: string | null })[]

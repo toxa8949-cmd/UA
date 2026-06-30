@@ -109,6 +109,18 @@ export default async function CityPage({
       />
 
       {/* Hero */}
+      {city.cover_image && (
+        <div className="container pt-4">
+          <div className="relative aspect-[2/1] w-full overflow-hidden rounded-3xl bg-sand-200 sm:aspect-[3/1]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={city.cover_image}
+              alt={city.name}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
+        </div>
+      )}
       <section className="border-b border-sand-300 bg-sand-200/40">
         <div className="container py-12">
           {city.country && (
