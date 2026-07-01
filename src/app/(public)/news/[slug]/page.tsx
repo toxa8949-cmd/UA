@@ -4,7 +4,10 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getNewsBySlug, getNewsSlugs, getNews } from "@/server/queries/news";
 import { renderMarkdown } from "@/lib/markdown";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, newsArticleJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { ReadingProgress } from "@/components/shared/ReadingProgress";
+import { PlacesCta } from "@/components/shared/PlacesCta";
 import { formatDate } from "@/lib/format";
 import { ArrowUpRight, ExternalLink } from "lucide-react";
 
@@ -28,6 +31,8 @@ export async function generateMetadata({
     description: item.seo_description ?? item.summary ?? undefined,
     path: `/news/${slug}`,
     ogEyebrow: "Новина",
+    ogType: "article",
+    publishedTime: item.published_at,
   });
 }
 
@@ -45,6 +50,16 @@ export default async function NewsItemPage({
 
   return (
     <>
+      <ReadingProgress />
+      <JsonLd
+        data={newsArticleJsonLd({
+          title: item.title,
+          description: item.summary,
+          slug,
+          publishedAt: item.published_at,
+          sourceName: item.source_name,
+        })}
+      />
       <Breadcrumbs
         items={[
           { name: "Головна", url: "/" },
@@ -69,6 +84,8 @@ export default async function NewsItemPage({
         <h1 className="mt-3 font-display text-3xl font-bold leading-tight text-ink">{item.title}</h1>
 
         <div className="prose-content mt-6" dangerouslySetInnerHTML={{ __html: html }} />
+
+        <PlacesCta countryName={item.country?.name} />
 
         {item.source_url && (
           <a

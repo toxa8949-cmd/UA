@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import {
   getServiceBySlug,
   getServiceSlugs,
+  getRelatedServices,
 } from "@/server/queries/services";
 import { buildMetadata } from "@/lib/seo";
 import { Star, Check, X } from "lucide-react";
@@ -41,6 +42,8 @@ export default async function ServicePage({
   const { slug } = await params;
   const service = await getServiceBySlug(slug);
   if (!service) notFound();
+
+  const related = await getRelatedServices(service.category_id, slug, 3);
 
   return (
     <>
@@ -116,6 +119,30 @@ export default async function ServicePage({
               {service.countries.map((c) => (
                 <Link key={c.id} href={`/countries/${c.slug}`}>
                   <Badge color="emerald">{c.emoji} {c.name}</Badge>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Схожі сервіси — перелінковка в межах категорії */}
+        {related.length > 0 && (
+          <div className="mt-12 border-t border-sand-300 pt-8">
+            <h2 className="mb-4 font-display text-xl font-bold text-ink">Схожі сервіси</h2>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {related.map((r) => (
+                <Link
+                  key={r.id}
+                  href={`/services/${r.slug}`}
+                  className="card-lift group rounded-2xl border border-sand-300 bg-white p-5 hover:border-emerald/40"
+                >
+                  <span className="font-display font-semibold text-ink group-hover:text-emerald">{r.name}</span>
+                  {r.description && (
+                    <p className="mt-1.5 line-clamp-2 text-sm text-slate-600">{r.description}</p>
+                  )}
+                  {r.pricing_summary && (
+                    <p className="mt-2 text-xs text-slate-500">{r.pricing_summary}</p>
+                  )}
                 </Link>
               ))}
             </div>

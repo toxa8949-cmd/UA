@@ -109,3 +109,33 @@ export async function getServiceCategories() {
     .order("name");
   return (data ?? []) as { id: string; name: string; slug: string }[];
 }
+
+/** Схожі сервіси тієї ж категорії (для перелінковки на сторінці сервісу). */
+export type RelatedService = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  rating: number | null;
+  is_featured: boolean;
+  pricing_summary: string | null;
+};
+
+export async function getRelatedServices(
+  categoryId: string | null,
+  excludeSlug: string,
+  limit = 3
+): Promise<RelatedService[]> {
+  if (!categoryId) return [];
+  const supabase = createPublicSupabase();
+  const { data } = await supabase
+    .from("services")
+    .select("id, name, slug, description, rating, is_featured, pricing_summary")
+    .eq("status", "published")
+    .eq("category_id", categoryId)
+    .neq("slug", excludeSlug)
+    .order("is_featured", { ascending: false })
+    .order("rating", { ascending: false, nullsFirst: false })
+    .limit(limit);
+  return (data ?? []) as RelatedService[];
+}

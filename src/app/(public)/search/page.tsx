@@ -57,6 +57,53 @@ export default function SearchPage() {
 
       {loading && <p className="mt-6 text-sm text-slate-400">Пошук...</p>}
 
+      {/* Порожній стан: підказки замість білого екрана */}
+      {q.trim().length < 2 && (
+        <div className="mt-10">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+            Популярне в каталозі
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { href: "/places/c/lawyer", label: "Юристи" },
+              { href: "/places/c/accountant", label: "Бухгалтери" },
+              { href: "/places/c/dentist", label: "Стоматологи" },
+              { href: "/places/c/kindergarten", label: "Садочки" },
+              { href: "/places/c/shop", label: "Українські магазини" },
+              { href: "/places/c/psychologist", label: "Психологи" },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="rounded-full border border-sand-300 bg-white px-4 py-1.5 text-sm text-slate-600 transition-colors hover:border-emerald/40 hover:text-emerald"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+
+          <h2 className="mb-3 mt-8 text-sm font-semibold uppercase tracking-wide text-slate-400">
+            Популярні калькулятори
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { href: "/calculators/salary-netto-brutto", label: "Зарплата netto/brutto (Польща)" },
+              { href: "/calculators/tax-jdg-poland", label: "Податки JDG" },
+              { href: "/calculators/salary-netto-germany", label: "Зарплата в Німеччині" },
+              { href: "/calculators/cost-of-living", label: "Вартість життя" },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="rounded-full border border-sand-300 bg-white px-4 py-1.5 text-sm text-slate-600 transition-colors hover:border-emerald/40 hover:text-emerald"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {!loading && q.trim().length >= 2 && total === 0 && (
         <p className="mt-6 text-slate-500">Нічого не знайдено за запитом «{q}».</p>
       )}

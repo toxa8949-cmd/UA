@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ArticleCard } from "@/components/article/ArticleCard";
 import { TableOfContents } from "@/components/article/TableOfContents";
+import { ReadingProgress } from "@/components/shared/ReadingProgress";
+import { PlacesCta } from "@/components/shared/PlacesCta";
 import { CountryCalculators } from "@/components/countries/CountryCalculators";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
@@ -36,6 +38,9 @@ export async function generateMetadata({
     description: article.seo_description ?? article.excerpt ?? undefined,
     path: `/articles/${slug}`,
     ogEyebrow: "Стаття",
+    ogType: "article",
+    publishedTime: article.published_at,
+    modifiedTime: article.updated_at,
   });
 }
 
@@ -109,6 +114,8 @@ export default async function ArticlePage({
             {article.country && (
               <CountryCalculators countrySlug={article.country.slug} />
             )}
+
+            <PlacesCta countryName={article.country?.name} />
 
             <div className="mt-12 rounded-2xl border border-sand-300 bg-sand-200/40 p-5 text-sm leading-relaxed text-slate-500">
               Інформація має ознайомчий характер і не є юридичною, податковою чи фінансовою
