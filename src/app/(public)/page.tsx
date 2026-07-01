@@ -1,20 +1,17 @@
 import { ButtonLink } from "@/components/ui/Button";
 import { Section } from "@/components/ui/Section";
-import { CountryCard } from "@/components/country/CountryCard";
 import { ArticleCard } from "@/components/article/ArticleCard";
-import { ServiceCard } from "@/components/service/ServiceCard";
 import { Newsletter } from "@/components/home/Newsletter";
 import { HeroDestinations } from "@/components/home/HeroDestinations";
-import { StatsStrip } from "@/components/home/StatsStrip";
+import { PlaceGrid } from "@/components/place/PlaceGrid";
 import { getCountries } from "@/server/queries/countries";
 import { getArticles } from "@/server/queries/articles";
 import { getServices } from "@/server/queries/services";
 import { getNews } from "@/server/queries/news";
 import { getPlacesPage } from "@/server/queries/places";
-import { PlaceGrid } from "@/components/place/PlaceGrid";
 import { formatDate } from "@/lib/format";
 import { CALCULATORS } from "@/lib/constants";
-import { Calculator, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Calculator, ArrowRight, ArrowUpRight, Star } from "lucide-react";
 import Link from "next/link";
 
 export const revalidate = 3600;
@@ -32,10 +29,10 @@ const FEATURED_CALC_SLUGS = [
 export default async function HomePage() {
   const [countries, articles, services, news, placesResult] = await Promise.all([
     getCountries(),
-    getArticles({ limit: 6 }),
+    getArticles({ limit: 3 }),
     getServices({ featured: true, limit: 4 }),
     getNews({ limit: 4 }),
-    getPlacesPage({ perPage: 6 }),
+    getPlacesPage({ perPage: 3 }),
   ]);
   const featuredPlaces = placesResult.items;
 
@@ -43,19 +40,12 @@ export default async function HomePage() {
     .map((slug) => CALCULATORS.find((c) => c.slug === slug))
     .filter((c): c is (typeof CALCULATORS)[number] => Boolean(c));
 
-  const stats = [
-    { value: String(countries.length), label: "Країни" },
-    { value: `${CALCULATORS.length}`, label: "Калькулятори" },
-    { value: "26+", label: "Гайди" },
-    { value: "2026", label: "Актуальні дані" },
-  ];
-
   return (
     <>
-      {/* ─── Hero ─── */}
+      {/* ─── Hero: заголовок + панель напрямків (вона ж — навігація по країнах) ─── */}
       <section className="relative overflow-hidden border-b border-sand-300 bg-sand-100">
         <div aria-hidden className="hero-glow pointer-events-none absolute inset-0" />
-        <div className="container relative py-12 md:py-14">
+        <div className="container relative py-10 md:py-12">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white px-3 py-1 font-mono text-xs uppercase tracking-widest text-emerald">
               <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
@@ -76,48 +66,39 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Сигнатура: панель напрямків */}
+          {/* Сигнатура: панель напрямків = компактна секція країн */}
           <HeroDestinations countries={countries} />
         </div>
       </section>
 
-      {/* ─── Метрики ─── */}
-      <StatsStrip stats={stats} />
-
-      {/* ─── Країни ─── */}
-      <Section eyebrow="Напрямки" title="Куди переїхати"
-        action={<Link href="/countries" className="flex items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">Усі країни <ArrowRight size={15} /></Link>}>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {countries.map((c) => <CountryCard key={c.id} country={c} />)}
-        </div>
-      </Section>
-
-      {/* ─── Калькулятори (6 ключових) ─── */}
+      {/* ─── Калькулятори: компактні рядки-картки ─── */}
       <Section eyebrow="Інструменти" title="Порахуйте наперед"
-        subtitle="Вартість життя, бюджет переїзду, податки й зарплата на руки — за актуальними ставками 2026."
-        className="bg-sand-200/50"
+        subtitle="Вартість життя, податки й зарплата на руки — за актуальними ставками 2026."
         action={<Link href="/calculators" className="flex items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">Усі калькулятори <ArrowRight size={15} /></Link>}>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {featuredCalcs.map((calc) => (
             <Link key={calc.slug} href={`/calculators/${calc.slug}`}
-              className="card-lift group rounded-2xl border border-sand-300 bg-white p-6 hover:border-emerald/40">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald">
-                <Calculator size={20} />
-              </div>
-              <h3 className="mt-5 font-display text-lg font-semibold text-ink">{calc.title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{calc.description}</p>
-              <div className="mt-4 flex items-center gap-1 text-sm font-medium text-emerald">
-                Відкрити <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </div>
+              className="card-lift group flex items-center gap-3.5 rounded-xl border border-sand-300 bg-white p-4 hover:border-emerald/40">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald">
+                <Calculator size={18} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-display text-[15px] font-semibold text-ink group-hover:text-emerald">
+                  {calc.title}
+                </span>
+                <span className="block truncate text-xs text-slate-500">{calc.description}</span>
+              </span>
+              <ArrowUpRight size={15} className="shrink-0 text-slate-300 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-emerald" />
             </Link>
           ))}
         </div>
       </Section>
 
-      {/* ─── Українцям поруч ─── */}
+      {/* ─── Українцям поруч: 1 ряд + CTA ─── */}
       {featuredPlaces.length >= 3 && (
         <Section eyebrow="Українцям поруч" title="Свої люди у вашому місті"
-          subtitle="Українські спеціалісти та заклади за кордоном — лікарі, юристи, садочки, магазини й кафе, що обслуговують рідною мовою."
+          subtitle="Лікарі, юристи, садочки, магазини й кафе, що обслуговують українською."
+          className="bg-sand-200/50"
           action={<Link href="/places" className="flex items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">Увесь каталог <ArrowRight size={15} /></Link>}>
           <PlaceGrid places={featuredPlaces} />
           <p className="mt-6 text-center text-sm text-slate-500">
@@ -129,7 +110,7 @@ export default async function HomePage() {
         </Section>
       )}
 
-      {/* ─── Статті ─── */}
+      {/* ─── Статті: 1 ряд ─── */}
       {articles.length > 0 && (
         <Section eyebrow="Гайди" title="Що варто прочитати"
           action={<Link href="/articles" className="flex items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">Усі статті <ArrowRight size={15} /></Link>}>
@@ -139,34 +120,75 @@ export default async function HomePage() {
         </Section>
       )}
 
-      {/* ─── Сервіси ─── */}
-      {services.length > 0 && (
-        <Section eyebrow="Сервіси" title="Перевірені інструменти"
-          subtitle="Банки, eSIM, перекази та страхування для життя за кордоном." className="bg-sand-200/50"
-          action={<Link href="/services" className="flex items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">Каталог <ArrowRight size={15} /></Link>}>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {services.map((s) => <ServiceCard key={s.id} service={s} />)}
-          </div>
-        </Section>
-      )}
-
-      {/* ─── Новини ─── */}
-      {news.length > 0 && (
-        <Section eyebrow="Свіже" title="Останні новини"
-          subtitle="Зміни правил, виплат і документів для українців за кордоном."
-          action={<Link href="/news" className="flex items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">Усі новини <ArrowRight size={15} /></Link>}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {news.map((n) => (
-              <Link key={n.id} href={`/news/${n.slug}`}
-                className="group rounded-2xl border border-sand-300 bg-white p-5 transition-colors hover:border-emerald/40">
-                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                  <time>{formatDate(n.published_at)}</time>
-                  {n.country && <span className="text-slate-600">· {n.country.emoji} {n.country.name}</span>}
+      {/* ─── Новини + Сервіси: одна смуга, дві колонки ─── */}
+      {(news.length > 0 || services.length > 0) && (
+        <Section className="bg-sand-200/50">
+          <div className="grid gap-10 lg:grid-cols-2">
+            {/* Новини — компактний список */}
+            {news.length > 0 && (
+              <div>
+                <div className="mb-5 flex items-end justify-between gap-4">
+                  <div>
+                    <div className="mb-2 font-mono text-xs uppercase tracking-widest text-emerald">Свіже</div>
+                    <h2 className="font-display text-2xl font-bold text-ink">Останні новини</h2>
+                  </div>
+                  <Link href="/news" className="flex shrink-0 items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">
+                    Усі <ArrowRight size={15} />
+                  </Link>
                 </div>
-                <p className="mt-2 font-display font-semibold leading-snug text-ink">{n.title}</p>
-                {n.summary && <p className="mt-1 line-clamp-2 text-sm text-slate-600">{n.summary}</p>}
-              </Link>
-            ))}
+                <div className="divide-y divide-sand-300 rounded-2xl border border-sand-300 bg-white">
+                  {news.map((n) => (
+                    <Link key={n.id} href={`/news/${n.slug}`} className="group block px-5 py-4 transition-colors hover:bg-sand-100/60">
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <time>{formatDate(n.published_at)}</time>
+                        {n.country && <span>· {n.country.emoji} {n.country.name}</span>}
+                      </div>
+                      <p className="mt-1 font-display font-semibold leading-snug text-ink group-hover:text-emerald">
+                        {n.title}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Сервіси — компактний список */}
+            {services.length > 0 && (
+              <div>
+                <div className="mb-5 flex items-end justify-between gap-4">
+                  <div>
+                    <div className="mb-2 font-mono text-xs uppercase tracking-widest text-emerald">Сервіси</div>
+                    <h2 className="font-display text-2xl font-bold text-ink">Перевірені інструменти</h2>
+                  </div>
+                  <Link href="/services" className="flex shrink-0 items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">
+                    Каталог <ArrowRight size={15} />
+                  </Link>
+                </div>
+                <div className="divide-y divide-sand-300 rounded-2xl border border-sand-300 bg-white">
+                  {services.map((s) => (
+                    <div key={s.id} className="flex items-center gap-4 px-5 py-4">
+                      <div className="min-w-0 flex-1">
+                        <Link href={`/services/${s.slug}`} className="font-display font-semibold text-ink hover:text-emerald">
+                          {s.name}
+                        </Link>
+                        {s.description && (
+                          <p className="mt-0.5 truncate text-sm text-slate-500">{s.description}</p>
+                        )}
+                      </div>
+                      {s.rating != null && (
+                        <span className="flex shrink-0 items-center gap-1 text-sm text-slate-600">
+                          <Star size={13} className="fill-gold-400 text-gold-400" /> {s.rating}
+                        </span>
+                      )}
+                      <a href={`/go/${s.slug}`} rel="nofollow sponsored"
+                        className="shrink-0 rounded-lg bg-emerald px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700">
+                        Перейти
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </Section>
       )}
