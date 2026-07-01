@@ -10,7 +10,7 @@ export function CountryCard({ country }: { country: Country }) {
   return (
     <Link
       href={`/countries/${country.slug}`}
-      className="group relative block overflow-hidden rounded-2xl border border-sand-300 bg-white transition-colors hover:border-emerald/40"
+      className="card-lift group relative block overflow-hidden rounded-2xl border border-sand-300 bg-white hover:border-emerald/40"
     >
       {country.cover_image ? (
         /* Банер без тексту — назву й прапор накладаємо поверх із затемненням */

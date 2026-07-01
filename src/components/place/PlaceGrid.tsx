@@ -20,7 +20,7 @@ export function PlaceGrid({ places }: { places: PlaceWithRelations[] }) {
           <Link
             key={place.id}
             href={`/places/${place.slug}`}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-white transition-colors hover:border-emerald/40"
+            className="card-lift group flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-white hover:border-emerald/40"
           >
             {/* Обкладинка */}
             <div className="relative aspect-[16/9] overflow-hidden bg-sand-200">

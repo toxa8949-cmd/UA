@@ -3,7 +3,9 @@ import { FOOTER_LINKS, MAIN_NAV, SITE } from "@/lib/constants";
 
 export function Footer() {
   return (
-    <footer className="mt-20 border-t border-sand-300 bg-ink text-sand-100">
+    <footer className="mt-20 bg-ink text-sand-100">
+      {/* Фірмова лінія: смарагд → золото */}
+      <div className="h-0.5 bg-gradient-to-r from-emerald via-gold-500 to-emerald" />
       <div className="container py-14">
         <div className="grid gap-10 md:grid-cols-3">
           <div>

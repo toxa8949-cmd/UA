@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
-import { MAIN_NAV, SITE } from "@/lib/constants";
+import { SITE } from "@/lib/constants";
 import { MobileNav } from "./MobileNav";
+import { NavLinks } from "./NavLinks";
 
 export function Header() {
   return (
@@ -17,15 +18,7 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-0.5 md:flex">
-          {MAIN_NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-sand-200 hover:text-ink"
-            >
-              {item.label}
-            </Link>
-          ))}
+          <NavLinks />
           <Link
             href="/search"
             aria-label="Пошук"

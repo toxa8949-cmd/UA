@@ -50,6 +50,7 @@ export default async function HomePage() {
     <>
       {/* ─── Hero ─── */}
       <section className="relative overflow-hidden border-b border-sand-300 bg-sand-100">
+        <div aria-hidden className="hero-glow pointer-events-none absolute inset-0" />
         <div className="container relative py-12 md:py-14">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white px-3 py-1 font-mono text-xs uppercase tracking-widest text-emerald">
@@ -95,7 +96,7 @@ export default async function HomePage() {
         <div className="grid gap-4 md:grid-cols-3">
           {featuredCalcs.map((calc) => (
             <Link key={calc.slug} href={`/calculators/${calc.slug}`}
-              className="group rounded-2xl border border-sand-300 bg-white p-6 transition-colors hover:border-emerald/40">
+              className="card-lift group rounded-2xl border border-sand-300 bg-white p-6 hover:border-emerald/40">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald">
                 <Calculator size={20} />
               </div>

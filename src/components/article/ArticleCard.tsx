@@ -4,7 +4,7 @@ import type { Article } from "@/types/db";
 
 export function ArticleCard({ article }: { article: Article }) {
   return (
-    <Link href={`/articles/${article.slug}`} className="group flex h-full flex-col rounded-2xl border border-sand-300 bg-white p-5 transition-colors hover:border-emerald/40">
+    <Link href={`/articles/${article.slug}`} className="card-lift group flex h-full flex-col rounded-2xl border border-sand-300 bg-white p-5 hover:border-emerald/40">
       <h3 className="font-display text-lg font-semibold leading-snug text-ink">{article.title}</h3>
       {article.excerpt && <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-slate-600">{article.excerpt}</p>}
       <div className="mt-4 flex items-center justify-between">
