@@ -3,7 +3,7 @@
 import { createAdminSupabase } from "@/lib/supabase";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slugify";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 const BUCKET = "places";
@@ -118,6 +118,7 @@ export async function savePlace(formData: FormData) {
 
   revalidatePath("/places");
   revalidatePath("/admin/places");
+  revalidateTag("places");
   redirect("/admin/places");
 }
 
@@ -136,6 +137,7 @@ export async function setPlaceStatus(formData: FormData) {
     .eq("id", id);
   revalidatePath("/admin/places");
   revalidatePath("/places");
+  revalidateTag("places");
 }
 
 export async function deletePlace(formData: FormData) {
@@ -145,4 +147,5 @@ export async function deletePlace(formData: FormData) {
   await supabase.from("places").delete().eq("id", id);
   revalidatePath("/admin/places");
   revalidatePath("/places");
+  revalidateTag("places");
 }

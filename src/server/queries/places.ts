@@ -159,16 +159,44 @@ export async function getPlacesPage(filter: PlacesFilter): Promise<PlacesPage> {
   };
 }
 
+/** Резолв slug → id через кешований довідник (без зайвих запитів у БД). */
 async function resolveCountryId(slug: string): Promise<string | null> {
-  const supabase = createPublicSupabase();
-  const { data } = await supabase.from("countries").select("id").eq("slug", slug).maybeSingle();
-  return ((data as { id: string } | null)?.id) ?? null;
+  const { countries } = await getLandingIndex();
+  return countries.find((c) => c.slug === slug)?.id ?? null;
 }
 
 async function resolveCityId(slug: string): Promise<string | null> {
-  const supabase = createPublicSupabase();
-  const { data } = await supabase.from("cities").select("id").eq("slug", slug).maybeSingle();
-  return ((data as { id: string } | null)?.id) ?? null;
+  const { cities } = await getLandingIndex();
+  return cities.find((c) => c.slug === slug)?.id ?? null;
+}
+
+/**
+ * Кешована вибірка каталогу: результати для кожної комбінації фільтрів
+ * зберігаються на 10 хв (тег "places" — інвалідація з адмінки).
+ * Текстовий пошук не кешуємо — комбінацій нескінченно багато.
+ */
+export async function getPlacesPageCached(
+  filter: PlacesFilter
+): Promise<PlacesPage> {
+  if (filter.query) return getPlacesPage(filter);
+
+  const key = JSON.stringify([
+    filter.countrySlug ?? "",
+    filter.category ?? "",
+    filter.citySlug ?? "",
+    filter.ukrainianSpeaking ? 1 : 0,
+    filter.ukrainianOwned ? 1 : 0,
+    filter.sort ?? "featured",
+    filter.page ?? 1,
+    filter.perPage ?? 24,
+  ]);
+
+  const cached = unstable_cache(
+    () => getPlacesPage(filter),
+    ["places-page", key],
+    { revalidate: 600, tags: ["places"] }
+  );
+  return cached();
 }
 
 export type CountryFacet = { slug: string; name: string; emoji: string | null; count: number };

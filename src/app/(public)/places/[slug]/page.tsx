@@ -22,6 +22,11 @@ import { MapPin, Phone, Globe, Instagram, Send, Mail, Clock, Check, ArrowUpRight
 
 export const revalidate = 3600;
 
+// ISR: сторінка закладу генерується на першому візиті й кешується на 1 год
+export function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({
   params,
 }: {

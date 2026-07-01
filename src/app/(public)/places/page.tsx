@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { PlacesExplorer } from "@/components/place/PlacesExplorer";
+import { Suspense } from "react";
 import {
-  getPlacesPage,
+  getPlacesPageCached,
   getPlacesFacets,
   getLandingIndex,
   type PlacesSort,
+  type PlacesFilter,
 } from "@/server/queries/places";
+import { PlacesSkeleton } from "@/components/place/PlacesSkeleton";
 import { placeCategoryLabel, cityLocative } from "@/lib/places";
 import { buildMetadata } from "@/lib/seo";
 
@@ -52,34 +55,17 @@ export async function generateMetadata({
   });
 }
 
-export default async function PlacesPage({
-  searchParams,
+/** Асинхронна частина: дані каталогу (стрімиться через Suspense) */
+async function PlacesResults({
+  filter,
+  active,
 }: {
-  searchParams: SP;
+  filter: PlacesFilter;
+  active: { country?: string; category?: string; city?: string; uk: boolean; owned: boolean; q?: string; sort: PlacesSort };
 }) {
-  const sp = await searchParams;
-  const country = first(sp.country);
-  const category = first(sp.category);
-  const city = first(sp.city);
-  const uk = first(sp.uk) === "1";
-  const owned = first(sp.owned) === "1";
-  const q = first(sp.q);
-  const sort = parseSort(first(sp.sort));
-  const page = Math.max(1, Number(first(sp.page)) || 1);
-
   const [result, facets, index] = await Promise.all([
-    getPlacesPage({
-      countrySlug: country,
-      category,
-      citySlug: city,
-      ukrainianSpeaking: uk,
-      ukrainianOwned: owned,
-      query: q,
-      sort,
-      page,
-      perPage: 24,
-    }),
-    getPlacesFacets(country),
+    getPlacesPageCached(filter),
+    getPlacesFacets(filter.countrySlug),
     getLandingIndex(),
   ]);
 
@@ -109,6 +95,65 @@ export default async function PlacesPage({
 
   return (
     <>
+      <PlacesExplorer
+        items={result.items}
+        total={result.total}
+        page={result.page}
+        totalPages={result.totalPages}
+        facets={facets}
+        active={active}
+      />
+
+      {/* Популярні запити — внутрішня перелінковка на SEO-лендінги */}
+      {popularLinks.length > 0 && (
+        <div className="mt-14 border-t border-sand-300 pt-10">
+          <h2 className="text-sm font-semibold text-ink">Популярні запити</h2>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {popularLinks.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="rounded-full border border-sand-300 bg-white px-4 py-1.5 text-sm text-slate-600 transition-colors hover:border-emerald/40 hover:text-emerald"
+              >
+                {l.label} <span className="text-slate-400">({l.count})</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default async function PlacesPage({
+  searchParams,
+}: {
+  searchParams: SP;
+}) {
+  const sp = await searchParams;
+  const country = first(sp.country);
+  const category = first(sp.category);
+  const city = first(sp.city);
+  const uk = first(sp.uk) === "1";
+  const owned = first(sp.owned) === "1";
+  const q = first(sp.q);
+  const sort = parseSort(first(sp.sort));
+  const page = Math.max(1, Number(first(sp.page)) || 1);
+
+  const filter: PlacesFilter = {
+    countrySlug: country,
+    category,
+    citySlug: city,
+    ukrainianSpeaking: uk,
+    ukrainianOwned: owned,
+    query: q,
+    sort,
+    page,
+    perPage: 24,
+  };
+
+  return (
+    <>
       <Breadcrumbs
         items={[
           { name: "Головна", url: "/" },
@@ -131,33 +176,14 @@ export default async function PlacesPage({
         </p>
 
         <div className="mt-8">
-          <PlacesExplorer
-            items={result.items}
-            total={result.total}
-            page={result.page}
-            totalPages={result.totalPages}
-            facets={facets}
-            active={{ country, category, city, uk, owned, q, sort }}
-          />
+          {/* Шапка рендериться миттєво, дані стрімляться сюди */}
+          <Suspense key={JSON.stringify(filter)} fallback={<PlacesSkeleton />}>
+            <PlacesResults
+              filter={filter}
+              active={{ country, category, city, uk, owned, q, sort }}
+            />
+          </Suspense>
         </div>
-
-        {/* Популярні запити — внутрішня перелінковка на SEO-лендінги */}
-        {popularLinks.length > 0 && (
-          <div className="mt-14 border-t border-sand-300 pt-10">
-            <h2 className="text-sm font-semibold text-ink">Популярні запити</h2>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {popularLinks.map((l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className="rounded-full border border-sand-300 bg-white px-4 py-1.5 text-sm text-slate-600 transition-colors hover:border-emerald/40 hover:text-emerald"
-                >
-                  {l.label} <span className="text-slate-400">({l.count})</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </>
   );

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PlaceGrid } from "@/components/place/PlaceGrid";
-import { getPlacesPage, getLandingIndex } from "@/server/queries/places";
+import { getPlacesPageCached, getLandingIndex } from "@/server/queries/places";
 import {
   getPlaceCategory,
   placeCategoryLabel,
@@ -21,6 +21,11 @@ import {
 import { ArrowRight } from "lucide-react";
 
 export const revalidate = 3600;
+
+// ISR: сторінки генеруються на першому візиті й кешуються на 1 год
+export function generateStaticParams() {
+  return [];
+}
 
 type Params = Promise<{ category: string }>;
 
@@ -54,7 +59,7 @@ export default async function CategoryLandingPage({
   if (!cat) notFound();
 
   const [result, index] = await Promise.all([
-    getPlacesPage({ category, perPage: 24 }),
+    getPlacesPageCached({ category, perPage: 24 }),
     getLandingIndex(),
   ]);
 

@@ -5,7 +5,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PlaceGrid } from "@/components/place/PlaceGrid";
 import {
-  getPlacesPage,
+  getPlacesPageCached,
   getLandingIndex,
   resolveLandingLocation,
 } from "@/server/queries/places";
@@ -25,6 +25,11 @@ import {
 import { ArrowRight } from "lucide-react";
 
 export const revalidate = 3600;
+
+// ISR: сторінки генеруються на першому візиті й кешуються на 1 год
+export function generateStaticParams() {
+  return [];
+}
 
 type Params = Promise<{ category: string; location: string }>;
 
@@ -49,7 +54,7 @@ export async function generateMetadata({
   if (!cat || !loc) return buildMetadata({ title: "Не знайдено", noIndex: true });
 
   const where = locativePhrase(loc);
-  const result = await getPlacesPage({
+  const result = await getPlacesPageCached({
     category,
     ...(loc.type === "city" ? { citySlug: loc.slug } : { countrySlug: loc.slug }),
     perPage: 1,
@@ -75,7 +80,7 @@ export default async function CategoryLocationLandingPage({
   if (!loc) notFound();
 
   const [result, index] = await Promise.all([
-    getPlacesPage({
+    getPlacesPageCached({
       category,
       ...(loc.type === "city" ? { citySlug: loc.slug } : { countrySlug: loc.slug }),
       perPage: 24,
