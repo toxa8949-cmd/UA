@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { PlacesExplorer } from "@/components/place/PlacesExplorer";
 import {
   getPlacesPage,
   getPlacesFacets,
+  getLandingIndex,
   type PlacesSort,
 } from "@/server/queries/places";
-import { placeCategoryLabel } from "@/lib/places";
+import { placeCategoryLabel, cityLocative } from "@/lib/places";
 import { buildMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -65,7 +67,7 @@ export default async function PlacesPage({
   const sort = parseSort(first(sp.sort));
   const page = Math.max(1, Number(first(sp.page)) || 1);
 
-  const [result, facets] = await Promise.all([
+  const [result, facets, index] = await Promise.all([
     getPlacesPage({
       countrySlug: country,
       category,
@@ -78,7 +80,32 @@ export default async function PlacesPage({
       perPage: 24,
     }),
     getPlacesFacets(country),
+    getLandingIndex(),
   ]);
+
+  // Популярні запити: топ комбінацій категорія × місто для внутрішньої перелінковки
+  const comboCounts = new Map<string, number>();
+  for (const r of index.rows) {
+    if (!r.city_id) continue;
+    const key = `${r.category}|${r.city_id}`;
+    comboCounts.set(key, (comboCounts.get(key) ?? 0) + 1);
+  }
+  const cityById = new Map(index.cities.map((c) => [c.id, c]));
+  const popularLinks = [...comboCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 20)
+    .map(([key, count]) => {
+      const [cat, cityId] = key.split("|");
+      const c = cityById.get(cityId);
+      return c
+        ? {
+            href: `/places/c/${cat}/${c.slug}`,
+            label: `${placeCategoryLabel(cat)} ${cityLocative(c.name)}`,
+            count,
+          }
+        : null;
+    })
+    .filter(Boolean) as { href: string; label: string; count: number }[];
 
   return (
     <>
@@ -105,6 +132,24 @@ export default async function PlacesPage({
             active={{ country, category, city, uk, owned, q, sort }}
           />
         </div>
+
+        {/* Популярні запити — внутрішня перелінковка на SEO-лендінги */}
+        {popularLinks.length > 0 && (
+          <div className="mt-14 border-t border-sand-300 pt-10">
+            <h2 className="text-sm font-semibold text-ink">Популярні запити</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {popularLinks.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="rounded-full border border-sand-300 bg-white px-4 py-1.5 text-sm text-slate-600 transition-colors hover:border-emerald/40 hover:text-emerald"
+                >
+                  {l.label} <span className="text-slate-400">({l.count})</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

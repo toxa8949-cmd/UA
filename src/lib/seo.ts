@@ -147,6 +147,24 @@ export function calculatorJsonLd(c: {
   };
 }
 
+// JSON-LD для списку (ItemList) — для лендінгів каталогу
+export function itemListJsonLd(
+  items: { name: string; url: string }[],
+  name?: string
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    ...(name ? { name } : {}),
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: it.name,
+      url: `${SITE.url}${it.url}`,
+    })),
+  };
+}
+
 // JSON-LD для локального бізнесу (LocalBusiness) — для rich results у локальному пошуку
 export function localBusinessJsonLd(p: {
   name: string;

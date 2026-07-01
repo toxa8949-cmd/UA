@@ -113,3 +113,120 @@ export default async function CategoryLandingPage({
           data={itemListJsonLd(
             result.items.map((p) => ({
               name: p.name,
+              url: `/places/${p.slug}`,
+            })),
+            `${label} для українців за кордоном`
+          )}
+        />
+      )}
+
+      <Breadcrumbs items={breadcrumbs} />
+
+      <div className="container pb-16">
+        <h1 className="font-display text-3xl font-bold text-ink">
+          {label} для українців за кордоном
+        </h1>
+        <div className="mt-3 max-w-2xl space-y-3 text-slate-600">
+          <p>
+            Шукаєте {service} з обслуговуванням українською мовою? Тут зібрані{" "}
+            {label.toLowerCase()} у країнах Європи, які працюють з українською
+            спільнотою — без мовного барʼєра та з розумінням ваших потреб.
+          </p>
+          <p>
+            У каталозі {result.total}{" "}
+            {result.total === 1 ? "заклад" : result.total < 5 ? "заклади" : "закладів"}.
+            На сторінці кожного — контакти, адреса, графік роботи й мови
+            обслуговування.
+          </p>
+        </div>
+
+        {/* Міста */}
+        {cityLinks.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-sm font-semibold text-ink">За містами</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {cityLinks.map((c) => (
+                <Link
+                  key={c.slug}
+                  href={`/places/c/${category}/${c.slug}`}
+                  className="rounded-full border border-sand-300 bg-white px-4 py-1.5 text-sm text-slate-600 transition-colors hover:border-emerald/40 hover:text-emerald"
+                >
+                  {label} {cityLocative(c.name)}{" "}
+                  <span className="text-slate-400">({c.count})</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Країни */}
+        {countryLinks.length > 0 && (
+          <div className="mt-5">
+            <h2 className="text-sm font-semibold text-ink">За країнами</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {countryLinks.map((c) => (
+                <Link
+                  key={c.slug}
+                  href={`/places/c/${category}/${c.slug}`}
+                  className="rounded-full border border-sand-300 bg-white px-4 py-1.5 text-sm text-slate-600 transition-colors hover:border-emerald/40 hover:text-emerald"
+                >
+                  {c.emoji ? `${c.emoji} ` : ""}
+                  {label} {COUNTRY_LOCATIVE[c.slug] ?? `— ${c.name}`}{" "}
+                  <span className="text-slate-400">({c.count})</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Заклади */}
+        <div className="mt-10">
+          {result.items.length > 0 ? (
+            <PlaceGrid places={result.items} />
+          ) : (
+            <p className="rounded-2xl border border-sand-300 bg-white p-6 text-slate-600">
+              У цій категорії поки немає закладів.{" "}
+              <Link href="/places" className="font-medium text-emerald">
+                Переглянути весь каталог →
+              </Link>
+            </p>
+          )}
+        </div>
+
+        {result.total > result.items.length && (
+          <div className="mt-8">
+            <Link
+              href={`/places?category=${category}`}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-700"
+            >
+              Усі {result.total} у каталозі <ArrowRight size={15} />
+            </Link>
+          </div>
+        )}
+
+        {/* FAQ */}
+        <div className="mt-14 max-w-2xl">
+          <h2 className="mb-4 font-display text-2xl font-bold text-ink">
+            Часті запитання
+          </h2>
+          <div className="space-y-3">
+            {faqs.map((f, i) => (
+              <details
+                key={i}
+                className="group rounded-xl border border-sand-300 bg-white p-4 [&_summary::-webkit-details-marker]:hidden"
+              >
+                <summary className="flex cursor-pointer items-center justify-between gap-3 font-medium text-ink">
+                  {f.question}
+                  <span className="text-slate-400 transition-transform group-open:rotate-180">
+                    ⌄
+                  </span>
+                </summary>
+                <p className="mt-3 leading-relaxed text-slate-600">{f.answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

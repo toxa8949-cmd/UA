@@ -142,7 +142,12 @@ export default async function PlacePage({
                 </span>
               )}
               <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-emerald">{label}</p>
+                <Link
+                  href={`/places/c/${place.category}`}
+                  className="font-mono text-xs uppercase tracking-widest text-emerald hover:underline"
+                >
+                  {label}
+                </Link>
                 <h1 className="mt-1 font-display text-3xl font-bold text-ink">{place.name}</h1>
                 <p className="mt-1 text-sm text-slate-500">
                   {place.city?.name}
@@ -232,6 +237,15 @@ export default async function PlacePage({
                 ))}
               </div>
             </div>
+
+            {place.city?.slug && (
+              <Link
+                href={`/places/c/${place.category}/${place.city.slug}`}
+                className="mt-4 block rounded-2xl border border-sand-300 bg-white p-4 text-center text-sm font-medium text-emerald transition-colors hover:bg-sand-100"
+              >
+                Усі {label.toLowerCase()} у {place.city.name} →
+              </Link>
+            )}
 
             <Link
               href="/places"

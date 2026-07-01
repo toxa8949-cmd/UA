@@ -262,6 +262,108 @@ async function _getPlacesFacets(countrySlug?: string): Promise<PlacesFacets> {
   };
 }
 
+// ─── SEO landing-сторінки: категорія × локація ───────────────
+
+export type LandingIndex = {
+  rows: { category: string; city_id: string | null; country_id: string | null }[];
+  cities: { id: string; slug: string; name: string; country_id: string | null }[];
+  countries: { id: string; slug: string; name: string; emoji: string | null }[];
+};
+
+/**
+ * Легкий зріз опублікованих місць + довідники міст/країн.
+ * Кешується на 1 год — використовується для sitemap, лендінгів і перелінковки.
+ */
+export const getLandingIndex = unstable_cache(
+  _getLandingIndex,
+  ["places-landing-index"],
+  { revalidate: 3600, tags: ["places"] }
+);
+
+async function _getLandingIndex(): Promise<LandingIndex> {
+  const supabase = createPublicSupabase();
+  const [{ data: rows }, { data: citiesData }, { data: countriesData }] =
+    await Promise.all([
+      supabase
+        .from("places")
+        .select("category, city_id, country_id")
+        .eq("status", "published"),
+      supabase.from("cities").select("id, slug, name, country_id"),
+      supabase.from("countries").select("id, slug, name, emoji"),
+    ]);
+  return {
+    rows: (rows ?? []) as LandingIndex["rows"],
+    cities: (citiesData ?? []) as LandingIndex["cities"],
+    countries: (countriesData ?? []) as LandingIndex["countries"],
+  };
+}
+
+export type PlaceLandingCombo = {
+  category: string;
+  /** slug міста або країни; null — сторінка лише за категорією */
+  location: string | null;
+};
+
+/**
+ * Комбінації для sitemap: кожна категорія з ≥1 опублікованим місцем,
+ * плюс категорія × місто та категорія × країна.
+ */
+export async function getPlaceLandingCombos(): Promise<PlaceLandingCombo[]> {
+  const { rows, cities, countries } = await getLandingIndex();
+  if (!rows.length) return [];
+
+  const citySlugById = new Map(cities.map((c) => [c.id, c.slug]));
+  const countrySlugById = new Map(countries.map((c) => [c.id, c.slug]));
+
+  const combos = new Map<string, PlaceLandingCombo>();
+  for (const r of rows) {
+    combos.set(r.category, { category: r.category, location: null });
+    const cs = r.city_id ? citySlugById.get(r.city_id) : null;
+    if (cs) combos.set(`${r.category}|${cs}`, { category: r.category, location: cs });
+    const ns = r.country_id ? countrySlugById.get(r.country_id) : null;
+    if (ns) combos.set(`${r.category}|${ns}`, { category: r.category, location: ns });
+  }
+  return [...combos.values()];
+}
+
+export type LandingLocation = {
+  type: "city" | "country";
+  id: string;
+  name: string;
+  slug: string;
+  /** Для міста — назва його країни (якщо відома) */
+  countryName: string | null;
+};
+
+/** Розпізнає slug локації: спершу місто, потім країна. */
+export async function resolveLandingLocation(
+  slug: string
+): Promise<LandingLocation | null> {
+  const { cities, countries } = await getLandingIndex();
+  const city = cities.find((c) => c.slug === slug);
+  if (city) {
+    const country = countries.find((c) => c.id === city.country_id) ?? null;
+    return {
+      type: "city",
+      id: city.id,
+      name: city.name,
+      slug: city.slug,
+      countryName: country?.name ?? null,
+    };
+  }
+  const country = countries.find((c) => c.slug === slug);
+  if (country) {
+    return {
+      type: "country",
+      id: country.id,
+      name: country.name,
+      slug: country.slug,
+      countryName: null,
+    };
+  }
+  return null;
+}
+
 /** Схожі місця: та сама категорія в тому самому місті/країні (для перелінковки). */
 export async function getRelatedPlaces(
   place: { id: string; category: string; city_id: string | null; country_id: string | null },
