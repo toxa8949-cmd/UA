@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { formatMoney } from "@/lib/format";
 import { COUNTRY_CODES } from "@/lib/constants";
 import { ArrowUpRight } from "lucide-react";
@@ -15,11 +16,12 @@ export function CountryCard({ country }: { country: Country }) {
       {country.cover_image ? (
         /* Банер без тексту — назву й прапор накладаємо поверх із затемненням */
         <div className="relative aspect-[3/2] overflow-hidden bg-sand-200">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={country.cover_image}
             alt={country.name}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
           {/* Легке затемнення зверху для глибини */}
           <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/30 to-transparent" />

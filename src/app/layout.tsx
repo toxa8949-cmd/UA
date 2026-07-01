@@ -1,14 +1,7 @@
 import type { Metadata } from "next";
-import "@fontsource/manrope/400.css";
-import "@fontsource/manrope/600.css";
-import "@fontsource/manrope/700.css";
-import "@fontsource/manrope/800.css";
-import "@fontsource/source-sans-3/400.css";
-import "@fontsource/source-sans-3/500.css";
-import "@fontsource/source-sans-3/600.css";
-import "@fontsource/jetbrains-mono/400.css";
-import "@fontsource/jetbrains-mono/500.css";
-import "@fontsource/jetbrains-mono/700.css";
+import "@fontsource-variable/manrope";
+import "@fontsource-variable/source-sans-3";
+import "@fontsource-variable/jetbrains-mono";
 import Script from "next/script";
 import "./globals.css";
 import { SITE } from "@/lib/constants";

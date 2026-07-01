@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: "Source Sans 3", system-ui, sans-serif;
-  --font-display: "Manrope", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: "Source Sans 3 Variable", system-ui, sans-serif;
+  --font-display: "Manrope Variable", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
 }
 
 @layer base {

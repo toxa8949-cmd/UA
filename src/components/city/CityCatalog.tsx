@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Search, X, ArrowUpRight, ArrowRight } from "lucide-react";
 import { formatMoney } from "@/lib/format";
 import type { CityWithCountry, Country } from "@/types/db";
@@ -76,11 +77,12 @@ export function CityCatalog({
     >
       {city.cover_image && (
         <div className="relative aspect-[3/2] overflow-hidden bg-sand-200">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={city.cover_image}
             alt={city.name}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
           <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/30 to-transparent" />
           <div className="absolute left-4 top-4">

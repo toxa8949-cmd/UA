@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@fontsource/jetbrains-mono": "^5.2.8",
-    "@fontsource/manrope": "^5.2.8",
-    "@fontsource/source-sans-3": "^5.2.9",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@fontsource-variable/manrope": "^5.2.8",
+    "@fontsource-variable/source-sans-3": "^5.2.9",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.4",
     "clsx": "^2.1.1",

@@ -10,6 +10,8 @@ import { getCountries } from "@/server/queries/countries";
 import { getArticles } from "@/server/queries/articles";
 import { getServices } from "@/server/queries/services";
 import { getNews } from "@/server/queries/news";
+import { getPlacesPage } from "@/server/queries/places";
+import { PlaceGrid } from "@/components/place/PlaceGrid";
 import { formatDate } from "@/lib/format";
 import { CALCULATORS } from "@/lib/constants";
 import { Calculator, ArrowRight, ArrowUpRight } from "lucide-react";
@@ -28,12 +30,14 @@ const FEATURED_CALC_SLUGS = [
 ];
 
 export default async function HomePage() {
-  const [countries, articles, services, news] = await Promise.all([
+  const [countries, articles, services, news, placesResult] = await Promise.all([
     getCountries(),
     getArticles({ limit: 6 }),
     getServices({ featured: true, limit: 4 }),
     getNews({ limit: 4 }),
+    getPlacesPage({ perPage: 6 }),
   ]);
+  const featuredPlaces = placesResult.items;
 
   const featuredCalcs = FEATURED_CALC_SLUGS
     .map((slug) => CALCULATORS.find((c) => c.slug === slug))
@@ -109,6 +113,21 @@ export default async function HomePage() {
           ))}
         </div>
       </Section>
+
+      {/* ─── Українцям поруч ─── */}
+      {featuredPlaces.length >= 3 && (
+        <Section eyebrow="Українцям поруч" title="Свої люди у вашому місті"
+          subtitle="Українські спеціалісти та заклади за кордоном — лікарі, юристи, садочки, магазини й кафе, що обслуговують рідною мовою."
+          action={<Link href="/places" className="flex items-center gap-1 text-sm font-medium text-emerald hover:text-emerald-700">Увесь каталог <ArrowRight size={15} /></Link>}>
+          <PlaceGrid places={featuredPlaces} />
+          <p className="mt-6 text-center text-sm text-slate-500">
+            Маєте бізнес за кордоном?{" "}
+            <Link href="/places/add" className="font-medium text-emerald hover:underline">
+              Додайте його безкоштовно →
+            </Link>
+          </p>
+        </Section>
+      )}
 
       {/* ─── Статті ─── */}
       {articles.length > 0 && (

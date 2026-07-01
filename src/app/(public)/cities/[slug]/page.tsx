@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
@@ -112,11 +113,13 @@ export default async function CityPage({
       {city.cover_image && (
         <div className="container pt-4">
           <div className="relative aspect-[2/1] w-full overflow-hidden rounded-3xl bg-sand-200 sm:aspect-[3/1]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={city.cover_image}
               alt={city.name}
-              className="absolute inset-0 h-full w-full object-cover"
+              fill
+              priority
+              sizes="(max-width: 1200px) 100vw, 1180px"
+              className="object-cover"
             />
           </div>
         </div>
