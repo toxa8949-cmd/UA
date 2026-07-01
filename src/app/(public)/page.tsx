@@ -13,6 +13,14 @@ import { formatDate } from "@/lib/format";
 import { CALCULATORS } from "@/lib/constants";
 import { Calculator, ArrowRight, ArrowUpRight, Star } from "lucide-react";
 import Link from "next/link";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "Життя за кордоном для українців: гайди, податки, калькулятори",
+  description:
+    "Довідник для українців у Європі 2026: переїзд, документи, податки, житло й робота в Польщі, Німеччині, Чехії, Іспанії та Португалії. Калькулятори зарплати netto/brutto і каталог українських послуг поруч.",
+  path: "/",
+});
 
 export const revalidate = 3600;
 

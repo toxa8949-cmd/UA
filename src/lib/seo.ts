@@ -9,6 +9,10 @@ type SeoParams = {
   noIndex?: boolean;
   ogEyebrow?: string;
   ogCode?: string;
+  /** Тип OG: "article" вмикає article-мету (дати публікації) */
+  ogType?: "website" | "article";
+  publishedTime?: string | null;
+  modifiedTime?: string | null;
 };
 
 export function buildMetadata({
@@ -19,6 +23,9 @@ export function buildMetadata({
   noIndex,
   ogEyebrow,
   ogCode,
+  ogType = "website",
+  publishedTime,
+  modifiedTime,
 }: SeoParams): Metadata {
   const fullTitle = title ? `${title} — ${SITE.name}` : SITE.name;
   const desc = description ?? SITE.description;
@@ -29,7 +36,8 @@ export function buildMetadata({
   const ogImage = image ?? `${SITE.url}/api/og?${ogParams.toString()}`;
 
   return {
-    title: fullTitle,
+    // absolute: layout-шаблон "%s — Сайт" не застосовується (без подвійного суфікса)
+    title: { absolute: fullTitle },
     description: desc,
     metadataBase: new URL(SITE.url),
     alternates: { canonical: url },
@@ -40,11 +48,18 @@ export function buildMetadata({
       url,
       siteName: SITE.name,
       locale: SITE.locale,
-      type: "website",
+      type: ogType,
+      ...(ogType === "article"
+        ? {
+            publishedTime: publishedTime ?? undefined,
+            modifiedTime: modifiedTime ?? undefined,
+          }
+        : {}),
       images: [{ url: ogImage, width: 1200, height: 630, alt: title ?? SITE.name }],
     },
     twitter: {
       card: "summary_large_image",
+      site: SITE.twitter,
       title: fullTitle,
       description: desc,
       images: [ogImage],
@@ -144,6 +159,27 @@ export function calculatorJsonLd(c: {
     inLanguage: "uk",
     isAccessibleForFree: true,
     publisher: { "@type": "Organization", name: SITE.name },
+  };
+}
+
+// JSON-LD для новини (NewsArticle) — rich results у Google News/Discover
+export function newsArticleJsonLd(n: {
+  title: string;
+  description?: string | null;
+  slug: string;
+  publishedAt?: string | null;
+  sourceName?: string | null;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: n.title,
+    description: n.description ?? undefined,
+    url: `${SITE.url}/news/${n.slug}`,
+    datePublished: n.publishedAt ?? undefined,
+    dateModified: n.publishedAt ?? undefined,
+    author: { "@type": "Organization", name: n.sourceName ?? SITE.name },
+    publisher: organizationJsonLd(),
   };
 }
 

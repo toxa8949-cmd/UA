@@ -10,12 +10,20 @@
 
 @layer base {
   html { scroll-behavior: smooth; }
+  /* Страховка від горизонтального скролу на мобільних.
+     clip (не hidden) — щоб position: sticky продовжував працювати. */
+  html, body { overflow-x: clip; }
   body {
     @apply bg-sand-100 text-ink antialiased;
     font-feature-settings: "ss01", "cv01";
   }
   h1, h2, h3, h4 {
     @apply font-display tracking-tight text-ink;
+    overflow-wrap: break-word;
+  }
+  /* iOS: інпути дрібніші за 16px викликають авто-zoom при фокусі */
+  @media (max-width: 640px) {
+    input, select, textarea { font-size: 16px; }
   }
   ::selection {
     @apply bg-emerald text-white;
@@ -30,6 +38,7 @@
 @layer components {
   .prose-content {
     @apply max-w-none text-[17px] leading-[1.75] text-slate-700;
+    overflow-wrap: anywhere;
   }
   .prose-content h2 {
     @apply relative mt-12 mb-4 scroll-mt-24 pl-4 font-display text-2xl font-bold text-ink;

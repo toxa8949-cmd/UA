@@ -92,8 +92,8 @@ export default async function AdminPlaces() {
       )}
 
       {/* Решта закладів */}
-      <div className="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white">
-        <table className="w-full text-sm">
+      <div className="mt-8 overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        <table className="w-full min-w-[720px] text-sm">
           <thead className="bg-slate-50 text-left text-slate-500">
             <tr>
               <th className="p-3">Назва</th>

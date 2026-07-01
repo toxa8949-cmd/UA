@@ -12,7 +12,7 @@ type City = { id: string; name: string; country_id: string | null };
 const initialState: SubmitPlaceState = { ok: false };
 
 const inputCls =
-  "w-full rounded-xl border border-sand-300 bg-white px-4 py-2.5 text-[15px] text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-emerald";
+  "w-full rounded-xl border border-sand-300 bg-white px-4 py-2.5 text-base text-ink outline-none transition-colors placeholder:text-slate-400 focus:border-emerald";
 
 function Field({
   label,
