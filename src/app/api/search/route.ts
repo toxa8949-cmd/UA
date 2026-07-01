@@ -8,13 +8,13 @@ export async function GET(req: Request) {
   const q = (searchParams.get("q") ?? "").trim();
 
   if (q.length < 2) {
-    return NextResponse.json({ articles: [], countries: [], services: [] });
+    return NextResponse.json({ articles: [], countries: [], services: [], places: [] });
   }
 
   const supabase = createPublicSupabase();
   const like = `%${q}%`;
 
-  const [articles, countries, services] = await Promise.all([
+  const [articles, countries, services, places] = await Promise.all([
     supabase
       .from("articles")
       .select("title, slug, excerpt")
@@ -33,11 +33,18 @@ export async function GET(req: Request) {
       .eq("status", "published")
       .ilike("name", like)
       .limit(6),
+    supabase
+      .from("places")
+      .select("name, slug, category, city:cities(name)")
+      .eq("status", "published")
+      .or(`name.ilike.${like},description.ilike.${like},address.ilike.${like}`)
+      .limit(6),
   ]);
 
   return NextResponse.json({
     articles: articles.data ?? [],
     countries: countries.data ?? [],
     services: services.data ?? [],
+    places: places.data ?? [],
   });
 }

@@ -3,14 +3,16 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Search as SearchIcon } from "lucide-react";
+import { placeCategoryLabel } from "@/lib/places";
 
 type Results = {
   articles: { title: string; slug: string; excerpt: string | null }[];
   countries: { name: string; slug: string; emoji: string | null }[];
   services: { name: string; slug: string; description: string | null }[];
+  places: { name: string; slug: string; category: string; city: { name: string } | null }[];
 };
 
-const EMPTY: Results = { articles: [], countries: [], services: [] };
+const EMPTY: Results = { articles: [], countries: [], services: [], places: [] };
 
 export default function SearchPage() {
   const [q, setQ] = useState("");
@@ -26,7 +28,8 @@ export default function SearchPage() {
       setLoading(true);
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
-        setResults(await res.json());
+        const data = await res.json();
+        setResults({ ...EMPTY, ...data });
       } catch {
         setResults(EMPTY);
       } finally {
@@ -36,7 +39,7 @@ export default function SearchPage() {
     return () => clearTimeout(t);
   }, [q]);
 
-  const total = results.articles.length + results.countries.length + results.services.length;
+  const total = results.articles.length + results.countries.length + results.services.length + results.places.length;
 
   return (
     <div className="container max-w-2xl pb-16 pt-8">
@@ -65,6 +68,23 @@ export default function SearchPage() {
             {results.countries.map((c) => (
               <Link key={c.slug} href={`/countries/${c.slug}`} className="block rounded-lg px-3 py-2 hover:bg-sand-200/50">
                 {c.emoji} {c.name}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {results.places.length > 0 && (
+        <section className="mt-8">
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400">Українцям поруч</h2>
+          <div className="space-y-1">
+            {results.places.map((p) => (
+              <Link key={p.slug} href={`/places/${p.slug}`} className="block rounded-lg px-3 py-2 hover:bg-sand-200/50">
+                <span className="font-medium text-slate-800">{p.name}</span>
+                <span className="block text-sm text-slate-500">
+                  {placeCategoryLabel(p.category)}
+                  {p.city?.name ? ` · ${p.city.name}` : ""}
+                </span>
               </Link>
             ))}
           </div>
